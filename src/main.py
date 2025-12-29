@@ -3,9 +3,10 @@
 This module initializes all dependencies and starts the application.
 """
 
-from src.repository import TaskRepository
-from src.service import TaskService
-from src.ui import ConsoleUI, Controller
+from repository.task_repository import TaskRepository
+from service.task_service import TaskService
+from ui.console import ConsoleUI
+from ui.controller import Controller
 
 
 def main() -> None:

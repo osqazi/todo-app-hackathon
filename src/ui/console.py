@@ -4,7 +4,7 @@ This module provides console display formatting and I/O utilities
 for the Todo application.
 """
 
-from src.domain import Task
+from domain.task import Task
 
 
 class ConsoleUI:

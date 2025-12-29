@@ -5,7 +5,8 @@ This module provides in-memory storage and CRUD operations for tasks.
 
 from datetime import datetime, timezone
 
-from src.domain import Task, TaskNotFoundError
+from domain.task import Task
+from domain.exceptions import TaskNotFoundError
 
 
 class TaskRepository:

@@ -7,6 +7,7 @@
 
 "use client";
 
+import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api";
 import { TaskForm } from "./TaskForm";
@@ -22,6 +23,8 @@ export interface Task {
 
 export function TaskList() {
   const queryClient = useQueryClient();
+  const [editingTaskId, setEditingTaskId] = useState<number | null>(null);
+  const [editTitle, setEditTitle] = useState("");
 
   // Fetch tasks query
   const {
@@ -125,6 +128,56 @@ export function TaskList() {
     },
   });
 
+  // Update task mutation with optimistic update
+  const updateTaskMutation = useMutation({
+    mutationFn: ({ taskId, data }: { taskId: number; data: { title: string } }) =>
+      apiClient.updateTask(taskId, data) as Promise<Task>,
+    onMutate: async ({ taskId, data }) => {
+      await queryClient.cancelQueries({ queryKey: ["tasks"] });
+      const previousTasks = queryClient.getQueryData<Task[]>(["tasks"]) || [];
+
+      queryClient.setQueryData<Task[]>(
+        ["tasks"],
+        previousTasks.map((task) =>
+          task.id === taskId
+            ? { ...task, title: data.title, updated_at: new Date().toISOString() }
+            : task
+        )
+      );
+
+      return { previousTasks };
+    },
+    onError: (err, { taskId }, context) => {
+      if (context?.previousTasks) {
+        queryClient.setQueryData(["tasks"], context.previousTasks);
+      }
+    },
+    onSuccess: () => {
+      setEditingTaskId(null);
+      setEditTitle("");
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
+    },
+  });
+
+  // Handle edit task
+  const handleStartEdit = (task: Task) => {
+    setEditingTaskId(task.id);
+    setEditTitle(task.title);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingTaskId(null);
+    setEditTitle("");
+  };
+
+  const handleSaveEdit = (taskId: number) => {
+    if (editTitle.trim()) {
+      updateTaskMutation.mutate({ taskId, data: { title: editTitle.trim() } });
+    }
+  };
+
   // Loading state
   if (isLoading) {
     return (
@@ -177,23 +230,70 @@ export function TaskList() {
               type="checkbox"
               checked={task.completed}
               onChange={() => toggleTaskMutation.mutate(task.id)}
-              disabled={toggleTaskMutation.isPending}
-              className="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+              disabled={toggleTaskMutation.isPending || editingTaskId === task.id}
+              className="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer disabled:opacity-50"
             />
-            <span
-              className={`flex-1 ${
-                task.completed ? "line-through text-gray-400" : "text-gray-900"
-              }`}
-            >
-              {task.title}
-            </span>
-            <button
-              onClick={() => deleteTaskMutation.mutate(task.id)}
-              disabled={deleteTaskMutation.isPending}
-              className="px-3 py-1 text-sm text-red-600 hover:text-red-700 hover:bg-red-50 rounded transition-colors disabled:opacity-50"
-            >
-              Delete
-            </button>
+
+            {editingTaskId === task.id ? (
+              // Edit mode
+              <>
+                <input
+                  type="text"
+                  value={editTitle}
+                  onChange={(e) => setEditTitle(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handleSaveEdit(task.id);
+                    } else if (e.key === "Escape") {
+                      handleCancelEdit();
+                    }
+                  }}
+                  disabled={updateTaskMutation.isPending}
+                  className="flex-1 px-3 py-1 border border-blue-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  autoFocus
+                />
+                <button
+                  onClick={() => handleSaveEdit(task.id)}
+                  disabled={updateTaskMutation.isPending || !editTitle.trim()}
+                  className="px-3 py-1 text-sm text-green-600 hover:text-green-700 hover:bg-green-50 rounded transition-colors disabled:opacity-50"
+                >
+                  Save
+                </button>
+                <button
+                  onClick={handleCancelEdit}
+                  disabled={updateTaskMutation.isPending}
+                  className="px-3 py-1 text-sm text-gray-600 hover:text-gray-700 hover:bg-gray-50 rounded transition-colors disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+              </>
+            ) : (
+              // View mode
+              <>
+                <span
+                  className={`flex-1 ${
+                    task.completed ? "line-through text-gray-400" : "text-gray-900"
+                  }`}
+                >
+                  {task.title}
+                </span>
+                <button
+                  onClick={() => handleStartEdit(task)}
+                  disabled={task.completed}
+                  className="px-3 py-1 text-sm text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  title={task.completed ? "Cannot edit completed task" : "Edit task"}
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => deleteTaskMutation.mutate(task.id)}
+                  disabled={deleteTaskMutation.isPending}
+                  className="px-3 py-1 text-sm text-red-600 hover:text-red-700 hover:bg-red-50 rounded transition-colors disabled:opacity-50"
+                >
+                  Delete
+                </button>
+              </>
+            )}
           </li>
         ))}
       </ul>
@@ -201,7 +301,8 @@ export function TaskList() {
       {/* Mutation pending indicator */}
       {(createTaskMutation.isPending ||
         toggleTaskMutation.isPending ||
-        deleteTaskMutation.isPending) && (
+        deleteTaskMutation.isPending ||
+        updateTaskMutation.isPending) && (
         <p className="mt-4 text-sm text-gray-500 text-center">Syncing...</p>
       )}
     </div>

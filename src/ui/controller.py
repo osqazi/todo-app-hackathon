@@ -4,9 +4,9 @@ This module provides the main application controller with menu routing
 and command handling for the Todo application.
 """
 
-from src.domain import InvalidTaskError, TaskNotFoundError
-from src.service import TaskService
-from src.ui.console import ConsoleUI
+from domain.exceptions import InvalidTaskError, TaskNotFoundError
+from service.task_service import TaskService
+from ui.console import ConsoleUI
 
 
 class Controller:

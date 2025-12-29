@@ -3,8 +3,9 @@
 This module provides business logic and validation for task operations.
 """
 
-from src.domain import InvalidTaskError, Task
-from src.repository import TaskRepository
+from domain.task import Task
+from domain.exceptions import InvalidTaskError
+from repository.task_repository import TaskRepository
 
 
 class TaskService:
