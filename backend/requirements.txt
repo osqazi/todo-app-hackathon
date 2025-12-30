@@ -15,6 +15,7 @@ python-dotenv>=1.0.0
 # Authentication & JWT
 python-jose[cryptography]>=3.3.0
 httpx>=0.25.0
+requests>=2.31.0
 
 # Data Validation
 pydantic>=2.0.0
