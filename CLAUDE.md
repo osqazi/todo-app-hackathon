@@ -212,6 +212,8 @@ See `.specify/memory/constitution.md` for code quality, testing, performance, se
 ## Active Technologies
 - Python 3.13+ + UV (package manager), Python standard library only (no external packages for Phase I) (001-todo-basic-console)
 - In-memory only (Python dict/list data structures - no persistence) (001-todo-basic-console)
+- Python 3.13+ (backend), TypeScript 5+ (frontend) + FastAPI, SQLModel, Alembic, Next.js 16, react-datepicker (003-intermediate-advanced-features)
+- PostgreSQL 15+ (Neon Serverless) with ENUM types, ARRAY columns, GIN indexes (003-intermediate-advanced-features)
 
 ## Recent Changes
 - 001-todo-basic-console: Added Python 3.13+ + UV (package manager), Python standard library only (no external packages for Phase I)

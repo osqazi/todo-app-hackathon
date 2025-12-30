@@ -19,7 +19,7 @@ load_dotenv(dotenv_path=env_path)
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from src.api import tasks, health
+from src.api import tasks, health, notifications
 
 
 @asynccontextmanager
@@ -54,6 +54,7 @@ app.add_middleware(
 # Include routers
 app.include_router(health.router, prefix="/api", tags=["health"])
 app.include_router(tasks.router, prefix="/api/tasks", tags=["tasks"])
+app.include_router(notifications.router, prefix="/api", tags=["notifications"])
 
 
 @app.get("/")

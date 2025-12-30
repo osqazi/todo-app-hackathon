@@ -1,0 +1,76 @@
+# Patch for create method - add due_date
+    def create(self, task_data: TaskCreate) -> Task:
+        """
+        Create a new task for the authenticated user.
+
+        Args:
+            task_data: Task creation data (includes priority, tags, due_date from Phase II Part 2).
+
+        Returns:
+            The created Task instance.
+        """
+        task = Task(
+            user_id=self.user_id,
+            title=task_data.title.strip(),
+            description=task_data.description.strip(),
+            priority=task_data.priority,
+            tags=task_data.tags,
+            due_date=task_data.due_date,  # US3: Due dates
+        )
+        self.session.add(task)
+        self.session.flush()
+        self.session.refresh(task)
+        return task
+
+# Patch for update method - add due_date handling with notification_sent reset
+    def update(
+        self,
+        task_id: int,
+        task_data: TaskUpdate,
+    ) -> Optional[Task]:
+        """
+        Update a task's fields (title, description, priority, tags, due_date).
+
+        Only updates if the task belongs to the authenticated user.
+        Resets notification_sent=False when due_date is updated (US3).
+
+        Args:
+            task_id: The task ID to update.
+            task_data: Fields to update (partial update supported).
+
+        Returns:
+            Updated Task instance if found, None otherwise.
+        """
+        task = self.get_by_id(task_id)
+        if task is None:
+            return None
+
+        # Track if due_date was updated
+        due_date_updated = False
+
+        # Update only provided fields
+        if task_data.title is not None:
+            task.title = task_data.title.strip()
+        if task_data.description is not None:
+            task.description = task_data.description.strip()
+        if task_data.priority is not None:
+            task.priority = task_data.priority
+        if task_data.tags is not None:
+            task.tags = task_data.tags
+        if task_data.due_date is not None:
+            # US3: Reset notification_sent when due_date changes
+            if task.due_date != task_data.due_date:
+                due_date_updated = True
+            task.due_date = task_data.due_date
+
+        # Reset notification_sent if due_date was updated
+        if due_date_updated:
+            task.notification_sent = False
+
+        # Update timestamp
+        from datetime import datetime, timezone
+        task.updated_at = datetime.now(timezone.utc)
+
+        self.session.flush()
+        self.session.refresh(task)
+        return task

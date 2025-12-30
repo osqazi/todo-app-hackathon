@@ -1,0 +1,74 @@
+/**
+ * Priority indicator styles for todo tasks.
+ *
+ * Visual indicators for task priority levels:
+ * - High: Red (urgent, needs immediate attention)
+ * - Medium: Yellow/Orange (important, plan accordingly)
+ * - Low: Green (nice to have, low urgency)
+ */
+
+/* Priority indicator dot */
+.priority-indicator {
+  font-size: 1.2em;
+  line-height: 1;
+}
+
+/* Priority colors for text and indicators */
+.priority-high {
+  color: #dc2626; /* Tailwind red-600 */
+}
+
+.priority-medium {
+  color: #d97706; /* Tailwind amber-600 */
+}
+
+.priority-low {
+  color: #16a34a; /* Tailwind green-600 */
+}
+
+/* Priority badge styles (for task list display) */
+.priority-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.priority-badge.high {
+  background-color: #fee2e2; /* Tailwind red-100 */
+  color: #991b1b; /* Tailwind red-800 */
+}
+
+.priority-badge.medium {
+  background-color: #fef3c7; /* Tailwind amber-100 */
+  color: #92400e; /* Tailwind amber-800 */
+}
+
+.priority-badge.low {
+  background-color: #dcfce7; /* Tailwind green-100 */
+  color: #14532d; /* Tailwind green-800 */
+}
+
+/* Priority selector dropdown styling */
+.priority-selector .priority-high {
+  color: #dc2626;
+}
+
+.priority-selector .priority-medium {
+  color: #d97706;
+}
+
+.priority-selector .priority-low {
+  color: #16a34a;
+}
+
+/* Hover effects for priority options */
+.priority-selector button:hover .priority-indicator {
+  transform: scale(1.1);
+  transition: transform 0.15s ease-in-out;
+}

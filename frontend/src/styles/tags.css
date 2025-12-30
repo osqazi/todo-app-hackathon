@@ -1,0 +1,108 @@
+/**
+ * Tag chip styles for todo tasks.
+ *
+ * Visual styles for category tags displayed as chips/badges.
+ * Supports add/remove interactions and visual feedback.
+ */
+
+/* Tag chip base styles */
+.tag-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.75rem;
+  background-color: #dbeafe; /* Tailwind blue-100 */
+  color: #1e40af; /* Tailwind blue-800 */
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.15s ease-in-out;
+}
+
+.tag-chip:hover {
+  background-color: #bfdbfe; /* Tailwind blue-200 */
+}
+
+/* Tag remove button */
+.tag-chip .tag-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-left: 0.25rem;
+  background-color: transparent;
+  border: none;
+  border-radius: 50%;
+  color: #1e40af; /* Tailwind blue-800 */
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  padding: 0;
+}
+
+.tag-chip .tag-remove:hover:not(:disabled) {
+  background-color: #93c5fd; /* Tailwind blue-300 */
+  color: #1e3a8a; /* Tailwind blue-900 */
+}
+
+.tag-chip .tag-remove:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Tag input container */
+.tag-input {
+  margin-bottom: 1rem;
+}
+
+/* Tag list container (for task display) */
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+/* Empty state */
+.tag-list:empty::before {
+  content: "No tags";
+  color: #9ca3af; /* Tailwind gray-400 */
+  font-size: 0.875rem;
+  font-style: italic;
+}
+
+/* Color variations for different tag contexts */
+.tag-chip.tag-work {
+  background-color: #fef3c7; /* Tailwind amber-100 */
+  color: #92400e; /* Tailwind amber-800 */
+}
+
+.tag-chip.tag-personal {
+  background-color: #ddd6fe; /* Tailwind violet-100 */
+  color: #5b21b6; /* Tailwind violet-800 */
+}
+
+.tag-chip.tag-urgent {
+  background-color: #fee2e2; /* Tailwind red-100 */
+  color: #991b1b; /* Tailwind red-800 */
+}
+
+/* Compact tag style (for task list view) */
+.tag-chip.compact {
+  padding: 0.125rem 0.5rem;
+  font-size: 0.75rem;
+}
+
+/* Responsive: stack tags on mobile */
+@media (max-width: 640px) {
+  .tag-list {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .tag-chip {
+    width: fit-content;
+  }
+}

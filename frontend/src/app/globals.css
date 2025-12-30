@@ -1,6 +1,12 @@
+@import '../styles/priorities.css';
+@import '../styles/tags.css';
+
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Phase II Part 2: Priority and Tag styles - @import must come before other rules */
 
 :root {
   --foreground-rgb: 0, 0, 0;
