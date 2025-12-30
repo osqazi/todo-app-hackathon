@@ -10,6 +10,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api";
 import Link from "next/link";
 
+type Priority = "high" | "medium" | "low";
+
 interface Task {
   id: number;
   title: string;
@@ -17,7 +19,7 @@ interface Task {
   completed: boolean;
   created_at: string;
   updated_at: string | null;
-  priority: "high" | "medium" | "low";
+  priority: Priority;
   tags: string[];
   due_date?: string | null;
   is_recurring?: boolean;
@@ -34,7 +36,7 @@ export default function EditTaskPage() {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    priority: "medium" as "high" | "medium" | "low",
+    priority: "medium" as Priority,
     tags: [] as string[],
     due_date: null as Date | null,
     is_recurring: false,
@@ -292,7 +294,7 @@ export default function EditTaskPage() {
               </label>
               <select
                 value={formData.priority}
-                onChange={(e) => setFormData({ ...formData, priority: e.target.value as "high" | "medium" | "low" })}
+                onChange={(e) => setFormData({ ...formData, priority: e.target.value as Priority })}
                 disabled={updateTaskMutation.isPending}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
               >

@@ -25,7 +25,7 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error?: { message: string } }>;
-  signUp: (email: string, password: string) => Promise<{ error?: { message: string } }>;
+  signUp: (email: string, password: string, name: string) => Promise<{ error?: { message: string } }>;
   signOut: () => Promise<void>;
 }
 
@@ -58,13 +58,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const loadSession = async () => {
     try {
       const session = await getSession();
-      // In better-auth 1.1.8, session has userId directly
-      if (session?.userId) {
+      // Better-auth returns session with user object
+      if (session?.data?.user) {
         setUser({
-          id: session.userId,
-          email: `${session.userId}@example.com`, // Placeholder since session doesn't have email
-          name: undefined,
-          image: undefined,
+          id: session.data.user.id,
+          email: session.data.user.email,
+          name: session.data.user.name || undefined,
+          image: session.data.user.image || undefined,
         });
       } else {
         setUser(null);
@@ -86,8 +86,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return {};
   };
 
-  const signUp = async (email: string, password: string) => {
-    const result = await authSignUp({ email, password });
+  const signUp = async (email: string, password: string, name: string) => {
+    const result = await authSignUp({ email, password, name });
     if (result.error) {
       const authError = result.error as AuthError;
       return { error: { message: authError.message || "Sign up failed" } };

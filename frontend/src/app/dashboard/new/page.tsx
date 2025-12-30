@@ -34,9 +34,10 @@ export default function NewTaskPage() {
       description?: string;
       priority?: "high" | "medium" | "low";
       tags?: string[];
-      due_date?: string;
+      due_date?: string | null;
       is_recurring?: boolean;
-      recurrence_pattern?: string;
+      recurrence_pattern?: "daily" | "weekly" | "monthly" | null;
+      recurrence_end_date?: string | null;
     }) => apiClient.createTask(data) as Promise<Task>,
     onSuccess: () => {
       // Invalidate tasks cache to refetch on dashboard
@@ -115,7 +116,11 @@ export default function NewTaskPage() {
       {/* Task Form */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
         <TaskForm
-          onSubmit={(data) => createTaskMutation.mutate(data)}
+          onSubmit={(data) => createTaskMutation.mutate({
+            ...data,
+            due_date: data.due_date ? data.due_date.toISOString() : null,
+            recurrence_end_date: data.recurrence_end_date ? data.recurrence_end_date.toISOString() : null,
+          })}
           isSubmitting={createTaskMutation.isPending}
         />
       </div>
