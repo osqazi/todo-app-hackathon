@@ -1,7 +1,8 @@
 """
 Vercel serverless function entry point for FastAPI backend.
 
-This file imports the FastAPI app and exports it for Vercel's Python runtime.
+This file imports the FastAPI app and wraps it with Mangum
+to make it compatible with Vercel's serverless environment.
 """
 
 import sys
@@ -12,8 +13,10 @@ backend_dir = Path(__file__).parent.parent
 sys.path.insert(0, str(backend_dir))
 
 # Import the FastAPI app from src.main
-from src.main import app
+from src.main import app as fastapi_app
 
-# Export the app for Vercel
-# Vercel expects a variable that can be called as an ASGI app
-handler = app
+# Import Mangum to wrap FastAPI for serverless
+from mangum import Mangum
+
+# Wrap the FastAPI app with Mangum for AWS Lambda/Vercel compatibility
+handler = Mangum(fastapi_app, lifespan="off")
