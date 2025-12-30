@@ -9,11 +9,22 @@ import Link from "next/link";
 import { getSession } from "@/lib/auth/helpers";
 import { redirect } from "next/navigation";
 
+// Force dynamic rendering to avoid build-time auth calls
+export const dynamic = 'force-dynamic';
+
 export default async function Home() {
-  const session = await getSession();
+  let session = null;
+
+  // Skip session check during build time
+  try {
+    session = await getSession();
+  } catch (error) {
+    // During build, session check will fail - that's expected
+    console.log("Session check skipped during build");
+  }
 
   // Redirect authenticated users to dashboard
-  if (session) {
+  if (session?.data) {
     redirect("/dashboard");
   }
 

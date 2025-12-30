@@ -18,7 +18,7 @@ console.log("DEBUG auth.ts: NEXT_PUBLIC_APP_URL =", process.env.NEXT_PUBLIC_APP_
 console.log("DEBUG auth.ts: NEXT_PUBLIC_API_URL =", process.env.NEXT_PUBLIC_API_URL);
 
 export const auth = betterAuth({
-  baseURL: "http://localhost:3000", // Explicitly set the auth server base URL
+  baseURL: process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000"),
   database: drizzleAdapter(db, {
     provider: "pg", // PostgreSQL
     schema: schema,

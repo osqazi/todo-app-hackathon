@@ -9,15 +9,27 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import DashboardHeader from "@/components/DashboardHeader";
 
+// Force dynamic rendering to avoid build-time auth calls
+export const dynamic = 'force-dynamic';
+
 export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  let sessionResult = null;
+
   // Get session from server-side auth instance
-  const sessionResult = await auth.api.getSession({
-    headers: await headers(),
-  });
+  // Skip during build time
+  try {
+    sessionResult = await auth.api.getSession({
+      headers: await headers(),
+    });
+  } catch (error) {
+    // During build, this will fail - redirect to sign-in
+    console.log("Auth check skipped during build");
+    redirect("/sign-in");
+  }
 
   // Auth guard - redirect to sign-in if not authenticated
   // Better Auth returns { session: {...}, user: {...} }
