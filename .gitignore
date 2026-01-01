@@ -28,6 +28,8 @@ ENV/
 .env.local
 .env.development
 .env.test
+.env.production
+.env.vercel-prod
 
 # UV
 .uv/
@@ -65,3 +67,4 @@ node_modules/
 
 # Next.js
 .next/
+.vercel
