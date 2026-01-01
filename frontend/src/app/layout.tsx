@@ -8,6 +8,7 @@ import type { Metadata } from "next";
 import { AuthProvider } from "@/context/AuthContext";
 import { QueryClientProviderWrapper } from "@/components/providers/QueryClientProvider";
 import "./globals.css";
+import { Analytics } from '@vercel/analytics/next';
 
 export const metadata: Metadata = {
   title: "Todo Application",
@@ -23,8 +24,9 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <AuthProvider>
-          <QueryClientProviderWrapper>{children}</QueryClientProviderWrapper>
+          <QueryClientProviderWrapper>{children} <Analytics /></QueryClientProviderWrapper>
         </AuthProvider>
+        
       </body>
     </html>
   );
