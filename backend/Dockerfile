@@ -24,12 +24,12 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the entire backend application
 COPY . .
 
-# Expose port 7860 (Hugging Face Spaces default)
-EXPOSE 7860
+# Expose port (Render.com will set PORT env var, defaults to 10000)
+EXPOSE 10000
 
-# Health check
+# Health check (Render.com compatible)
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD python -c "import requests; requests.get('http://localhost:7860/api/health')"
+    CMD python -c "import requests, os; port=os.getenv('PORT', '10000'); requests.get(f'http://localhost:{port}/api/health')"
 
-# Run the application with uvicorn
-CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "7860"]
+# Run the application with uvicorn (Render.com sets PORT env var)
+CMD ["sh", "-c", "uvicorn src.main:app --host 0.0.0.0 --port ${PORT:-10000}"]
