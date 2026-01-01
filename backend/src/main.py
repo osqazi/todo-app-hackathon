@@ -40,12 +40,18 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+# Get FRONTEND_URL from environment variable (required - no fallback)
+frontend_url = os.getenv("FRONTEND_URL")
+if not frontend_url:
+    raise RuntimeError(
+        "FRONTEND_URL environment variable not set. "
+        "Set it in .env.local (localhost) or .env (production)."
+    )
+
 # Configure CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        os.getenv("FRONTEND_URL", "http://localhost:3000"),
-    ],
+    allow_origins=[frontend_url],
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allow_headers=["Authorization", "Content-Type"],

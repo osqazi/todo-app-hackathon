@@ -53,7 +53,8 @@ def verify_jwt_token(
 
         if not expected_issuer or not expected_audience:
             raise RuntimeError(
-                "BETTER_AUTH_ISSUER and API_AUDIENCE environment variables must be set"
+                "BETTER_AUTH_ISSUER and API_AUDIENCE environment variables not set. "
+                "Set them in .env.local (localhost) or .env (production)."
             )
 
         # First decode WITHOUT validation to see claims (BEFORE JWKS fetch)

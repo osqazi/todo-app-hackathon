@@ -17,13 +17,28 @@ import * as schema from "./db/schema";
 console.log("DEBUG auth.ts: NEXT_PUBLIC_APP_URL =", process.env.NEXT_PUBLIC_APP_URL);
 console.log("DEBUG auth.ts: NEXT_PUBLIC_API_URL =", process.env.NEXT_PUBLIC_API_URL);
 
+// Validate required environment variables
+const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+const secret = process.env.BETTER_AUTH_SECRET;
+
+if (!appUrl) {
+  throw new Error("NEXT_PUBLIC_APP_URL environment variable not set. Set it in .env.local (localhost) or .env (production).");
+}
+if (!apiUrl) {
+  throw new Error("NEXT_PUBLIC_API_URL environment variable not set. Set it in .env.local (localhost) or .env (production).");
+}
+if (!secret) {
+  throw new Error("BETTER_AUTH_SECRET environment variable not set. Set it in .env.local (localhost) or .env (production).");
+}
+
 export const auth = betterAuth({
-  baseURL: process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000"),
+  baseURL: appUrl,
   database: drizzleAdapter(db, {
     provider: "pg", // PostgreSQL
     schema: schema,
   }),
-  secret: process.env.BETTER_AUTH_SECRET || "dev-secret-key-change-in-production-min-32-chars",
+  secret: secret,
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: false, // Phase II: No email verification
@@ -40,8 +55,8 @@ export const auth = betterAuth({
     jwt(),
   ],
   trustedOrigins: [
-    process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
-    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000",
+    appUrl,
+    apiUrl,
   ],
   advanced: {
     cookiePrefix: "better-auth",

@@ -7,11 +7,13 @@ from dotenv import load_dotenv
 # Load environment variables from .env file
 load_dotenv()
 
-# Get database URL from environment variable
-DATABASE_URL = os.getenv(
-    "DATABASE_URL",
-    "postgresql://postgres:postgres@localhost:5432/todo_db"
-)
+# Get database URL from environment variable (required - no fallback)
+DATABASE_URL = os.getenv("DATABASE_URL")
+if not DATABASE_URL:
+    raise RuntimeError(
+        "DATABASE_URL environment variable not set. "
+        "Set it in .env.local (localhost) or .env (production)."
+    )
 
 # Create async engine with connection pool settings
 # pool_pre_ping: Verify connections are alive before using them

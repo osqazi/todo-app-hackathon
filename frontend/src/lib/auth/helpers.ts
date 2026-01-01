@@ -6,9 +6,15 @@
 import { createAuthClient } from "better-auth/react";
 import { jwtClient } from "better-auth/client/plugins";
 
-// Create the auth client with credentials: "include" for cookie persistence
+// Get NEXT_PUBLIC_APP_URL from environment (required)
+const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+if (!appUrl) {
+  throw new Error("NEXT_PUBLIC_APP_URL environment variable not set. Set it in .env.local (localhost) or .env (production).");
+}
+
+// Create auth client with credentials: "include" for cookie persistence
 const authClient = createAuthClient({
-  baseURL: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+  baseURL: appUrl,
   plugins: [
     jwtClient(),
   ],
@@ -24,7 +30,7 @@ export const signOut = authClient.signOut;
 export const getSession = authClient.getSession;
 
 /**
- * Get the current session (helper function).
+ * Get current session (helper function).
  */
 export async function fetchSession() {
   try {

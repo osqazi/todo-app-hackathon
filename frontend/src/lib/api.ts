@@ -7,7 +7,11 @@
 
 import { getToken } from "./auth/helpers";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+// Get NEXT_PUBLIC_API_URL from environment (required)
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+if (!API_URL) {
+  throw new Error("NEXT_PUBLIC_API_URL environment variable not set. Set it in .env.local (localhost) or .env (production).");
+}
 
 interface FetchOptions extends RequestInit {
   requiresAuth?: boolean;

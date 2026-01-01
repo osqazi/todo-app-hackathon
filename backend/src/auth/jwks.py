@@ -41,7 +41,7 @@ def get_jwks_url() -> str:
     if not jwks_url:
         raise RuntimeError(
             "BETTER_AUTH_JWKS_URL environment variable not set. "
-            "Set it to your Better Auth JWKS endpoint (e.g., http://localhost:3000/api/auth/jwks)"
+            "Set it in .env.local (localhost) or .env (production)."
         )
     return jwks_url
 
