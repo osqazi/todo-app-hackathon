@@ -13,8 +13,12 @@ from dotenv import load_dotenv
 # Load environment variables FIRST before any other imports that might use them
 # Get the backend directory (parent of src/)
 backend_dir = Path(__file__).parent.parent
-env_path = backend_dir / ".env"
-load_dotenv(dotenv_path=env_path)
+# Load from .env.local for local development, .env for production
+# Render.com/Vercel set environment variables directly, so file loading is optional
+env_path = backend_dir / ".env.local"
+if not env_path.exists():
+    env_path = backend_dir / ".env"
+load_dotenv(dotenv_path=env_path, override=False)
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -42,6 +46,7 @@ app = FastAPI(
 
 # Get FRONTEND_URL from environment variable (required - no fallback)
 frontend_url = os.getenv("FRONTEND_URL")
+print(f"DEBUG main.py: FRONTEND_URL from env = {frontend_url}")
 if not frontend_url:
     raise RuntimeError(
         "FRONTEND_URL environment variable not set. "
@@ -54,7 +59,7 @@ app.add_middleware(
     allow_origins=[frontend_url],
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allow_headers=["Authorization", "Content-Type"],
+    allow_headers=["Authorization", "Content-Type", "X-Requested-With"],
 )
 
 # Include routers
