@@ -9,7 +9,6 @@ import { getToken } from "./auth/helpers";
 
 // Get NEXT_PUBLIC_API_URL from environment (required)
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
-console.log("DEBUG api.ts: API_URL =", API_URL);
 if (!API_URL) {
   throw new Error("NEXT_PUBLIC_API_URL environment variable not set. Set it in .env.local (localhost) or .env (production).");
 }
