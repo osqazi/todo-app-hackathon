@@ -7,7 +7,6 @@
 import type { Metadata } from "next";
 import { AuthProvider } from "@/context/AuthContext";
 import { QueryClientProviderWrapper } from "@/components/providers/QueryClientProvider";
-import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Todo Application",
