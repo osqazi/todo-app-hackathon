@@ -39,21 +39,25 @@ export default function SignUpPage() {
       }
 
       // Attempt signup
-      const { data, error: signUpError } = await signUp({
+      console.log("Sign-up attempt for:", email, name);
+      const result = await signUp({
         email,
         password,
         name,
       });
 
-      if (signUpError) {
-        setError(signUpError.message || "Failed to create account");
+      console.log("Sign-up result:", result);
+
+      if (result.error) {
+        console.error("Sign-up error:", result.error);
+        setError(result.error.message || "Failed to create account");
         setLoading(false);
         return;
       }
 
-      // Success - redirect to dashboard
-      router.push("/dashboard");
-      router.refresh();
+      console.log("Sign-up successful, redirecting to dashboard...");
+      // Success - redirect to dashboard with window.location for full reload
+      window.location.href = "/dashboard";
     } catch (err) {
       setError("An unexpected error occurred");
       setLoading(false);

@@ -22,20 +22,26 @@ export default function SignInPage() {
     setLoading(true);
 
     try {
-      const { data, error: signInError } = await signIn({
+      console.log("Sign-in attempt for:", email);
+      const result = await signIn({
         email,
         password,
       });
 
-      if (signInError) {
-        setError(signInError.message || "Invalid email or password");
+      console.log("Sign-in result:", result);
+
+      if (result.error) {
+        console.error("Sign-in error:", result.error);
+        setError(result.error.message || "Invalid email or password");
         setLoading(false);
         return;
       }
 
+      console.log("Sign-in successful, redirecting to dashboard...");
       // Success - use window.location to ensure full page reload with new session
       window.location.href = "/dashboard";
     } catch (err) {
+      console.error("Sign-in exception:", err);
       setError("An unexpected error occurred");
       setLoading(false);
     }
