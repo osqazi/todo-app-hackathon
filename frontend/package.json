@@ -30,6 +30,7 @@
     "@types/react-dom": "^19",
     "autoprefixer": "^10.4.23",
     "drizzle-kit": "^0.31.8",
-    "eslint": "^9"
+    "eslint": "^9",
+    "typescript": "5.9.3"
   }
 }

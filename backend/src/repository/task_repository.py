@@ -254,7 +254,8 @@ class TaskRepository:
         # Apply tag filter (array overlap operator)
         if tags:
             # Task must contain at least one of the specified tags
-            query = query.where(Task.tags.overlap(tags))
+            # Use PostgreSQL && (overlap) operator
+            query = query.where(Task.tags.op("&&")(tags))
 
         # Apply due date range filter
         if due_date_from:
@@ -322,3 +323,26 @@ class TaskRepository:
         tasks = list(result.scalars().all())
 
         return tasks, total_count
+
+    def get_unique_tags(self) -> List[str]:
+        """
+        Get all unique tags used by the authenticated user's tasks.
+
+        Returns:
+            Sorted list of unique tag values.
+        """
+        from sqlalchemy import func
+
+        # Get all tasks for the user
+        query = select(Task.tags).where(Task.user_id == self.user_id)
+        result = self.session.execute(query)
+        all_tags_arrays = result.scalars().all()
+
+        # Flatten and deduplicate
+        unique_tags = set()
+        for tags_array in all_tags_arrays:
+            if tags_array:  # Skip None values
+                unique_tags.update(tags_array)
+
+        # Return sorted list
+        return sorted(list(unique_tags))

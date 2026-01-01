@@ -101,6 +101,58 @@ def list_tasks(
     )
 
 
+@router.get("/tags/unique", response_model=List[str])
+def get_unique_tags(
+    current_user_id: str = Depends(get_current_user),
+    session: Session = Depends(get_session),
+):
+    """
+    Get all unique tags used by the authenticated user's tasks.
+
+    Returns a sorted list of unique tag values.
+    """
+    service = TaskService(session, current_user_id)
+    return service.get_unique_tags()
+
+
+@router.get("/due", response_model=List[TaskResponse])
+def get_due_tasks(
+    current_user_id: str = Depends(get_current_user),
+    session: Session = Depends(get_session),
+):
+    """
+    Get tasks due within the next 5 minutes that haven't been notified yet.
+
+    Returns tasks where:
+    - due_date is between now and now + 5 minutes
+    - status is not completed
+    - notification_sent is False
+    - belongs to the authenticated user
+
+    Used by frontend notification polling (60-second interval).
+    """
+    from datetime import timedelta
+    from sqlmodel import select
+    from src.models.task import Task
+
+    now = datetime.now()
+    notification_window = now + timedelta(minutes=5)
+
+    statement = (
+        select(Task)
+        .where(
+            Task.user_id == current_user_id,
+            Task.completed == False,
+            Task.due_date.between(now, notification_window),
+            Task.notification_sent == False,
+        )
+        .order_by(Task.due_date.asc())
+    )
+
+    tasks = session.execute(statement).scalars().all()
+    return list(tasks)
+
+
 @router.post("/", response_model=TaskResponse, status_code=status.HTTP_201_CREATED)
 def create_task(
     task_data: TaskCreate,
@@ -236,3 +288,37 @@ def complete_task(
         completed_task=completed_task,
         next_instance=next_instance
     )
+
+
+@router.post("/{task_id}/notification-sent", status_code=status.HTTP_204_NO_CONTENT)
+def mark_notification_sent(
+    task_id: int,
+    current_user_id: str = Depends(get_current_user),
+    session: Session = Depends(get_session),
+):
+    """
+    Mark a task's notification as sent.
+
+    Updates notification_sent=True to prevent duplicate notifications.
+    Only the task owner can mark their task as notified.
+
+    Returns 404 if task not found or doesn't belong to user.
+    """
+    from sqlmodel import select
+    from src.models.task import Task
+
+    statement = select(Task).where(
+        Task.id == task_id,
+        Task.user_id == current_user_id,
+    )
+
+    task = session.execute(statement).scalars().first()
+    if task is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Task not found",
+        )
+
+    task.notification_sent = True
+    session.add(task)
+    session.commit()

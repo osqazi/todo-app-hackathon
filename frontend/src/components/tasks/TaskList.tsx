@@ -23,6 +23,7 @@ export interface Task {
   updated_at: string | null;
   priority: "high" | "medium" | "low";
   tags: string[];
+  due_date: string | null;
 }
 
 interface TaskListResponse {
@@ -176,6 +177,31 @@ export function TaskList({ searchQuery = "", filters = {}, sortOptions = { sort_
     }
   };
 
+  const getPriorityBadgeColor = (priority: string) => {
+    switch (priority) {
+      case "high":
+        return "bg-red-100 text-red-800 border-red-300";
+      case "medium":
+        return "bg-yellow-100 text-yellow-800 border-yellow-300";
+      case "low":
+        return "bg-green-100 text-green-800 border-green-300";
+      default:
+        return "bg-gray-100 text-gray-800 border-gray-300";
+    }
+  };
+
+  const isOverdue = (dueDate: string | null, completed: boolean) => {
+    if (!dueDate || completed) return false;
+    return new Date(dueDate) < new Date();
+  };
+
+  const getDueDateColor = (dueDate: string | null, completed: boolean) => {
+    if (!dueDate) return "text-gray-400";
+    if (completed) return "text-gray-400";
+    if (isOverdue(dueDate, completed)) return "text-red-600 font-semibold";
+    return "text-orange-600";
+  };
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center p-8">
@@ -296,13 +322,23 @@ export function TaskList({ searchQuery = "", filters = {}, sortOptions = { sort_
 
                 {/* Task Content */}
                 <div className="flex-1 min-w-0">
-                      <h3
-                        className={`text-lg font-medium ${
-                          task.completed ? "line-through text-gray-400" : "text-gray-900"
-                        }`}
-                      >
-                        {task.title}
-                      </h3>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h3
+                          className={`text-lg font-medium ${
+                            task.completed ? "line-through text-gray-400" : "text-gray-900"
+                          }`}
+                        >
+                          {task.title}
+                        </h3>
+                        {/* Priority Badge */}
+                        <span
+                          className={`px-2 py-0.5 text-xs font-semibold rounded border ${getPriorityBadgeColor(
+                            task.priority
+                          )}`}
+                        >
+                          {task.priority.toUpperCase()}
+                        </span>
+                      </div>
                       {task.description && (
                         <p
                           className={`text-sm mt-1 ${
@@ -323,6 +359,27 @@ export function TaskList({ searchQuery = "", filters = {}, sortOptions = { sort_
                               {tag}
                             </span>
                           ))}
+                        </div>
+                      )}
+                      {/* Due Date */}
+                      {task.due_date && (
+                        <div className={`text-sm mt-2 flex items-center gap-1 ${getDueDateColor(task.due_date, task.completed)}`}>
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                            />
+                          </svg>
+                          <span>
+                            Due: {new Date(task.due_date).toLocaleString()}
+                            {isOverdue(task.due_date, task.completed) && (
+                              <span className="ml-2 px-2 py-0.5 text-xs font-bold bg-red-100 text-red-800 rounded">
+                                OVERDUE
+                              </span>
+                            )}
+                          </span>
                         </div>
                       )}
                       <p className="text-xs text-gray-400 mt-2">

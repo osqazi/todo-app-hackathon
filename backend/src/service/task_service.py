@@ -188,6 +188,15 @@ class TaskService:
             limit=limit,
         )
 
+    def get_unique_tags(self) -> List[str]:
+        """
+        Get all unique tags used by the authenticated user's tasks.
+
+        Returns:
+            Sorted list of unique tag values.
+        """
+        return self.repository.get_unique_tags()
+
     # ===== RECURRING TASKS LOGIC (US4) =====
 
     def calculate_next_due_date(

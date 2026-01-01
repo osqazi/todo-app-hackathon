@@ -94,7 +94,7 @@ class ApiClient {
 
   // Task endpoints
   async getTasks(offset = 0, limit = 100) {
-    return this.request(`/api/tasks?offset=${offset}&limit=${limit}`);
+    return this.request(`/api/tasks/?offset=${offset}&limit=${limit}`);
   }
 
   async getTasksFiltered(params: {
@@ -139,7 +139,7 @@ class ApiClient {
     if (params.sort_by) queryParams.append("sort_by", params.sort_by);
     if (params.sort_order) queryParams.append("sort_order", params.sort_order);
 
-    return this.request(`/api/tasks?${queryParams.toString()}`);
+    return this.request(`/api/tasks/?${queryParams.toString()}`);
   }
 
   async createTask(data: {
@@ -152,7 +152,7 @@ class ApiClient {
     recurrence_pattern?: "daily" | "weekly" | "monthly" | null;
     recurrence_end_date?: string | null;
   }) {
-    return this.request("/api/tasks", {
+    return this.request("/api/tasks/", {
       method: "POST",
       body: JSON.stringify(data),
     });
@@ -201,6 +201,11 @@ class ApiClient {
     }>(`/api/tasks/${taskId}/complete`, {
       method: "POST",
     });
+  }
+
+  // Get unique tags
+  async getUniqueTags(): Promise<string[]> {
+    return this.request<string[]>("/api/tasks/tags/unique");
   }
 
   // Notification endpoints (US3)

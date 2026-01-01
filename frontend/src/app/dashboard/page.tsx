@@ -7,11 +7,13 @@
 import { useState, useEffect, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import { useQuery } from "@tanstack/react-query";
 import { TaskList } from "@/components/tasks/TaskList";
 import SearchBar from "@/components/tasks/SearchBar";
 import TaskFilters, { FilterCriteria } from "@/components/tasks/TaskFilters";
 import SortSelector, { SortOptions } from "@/components/tasks/SortSelector";
 import { useNotificationPolling } from "@/hooks/useNotificationPolling";
+import { apiClient } from "@/lib/api";
 
 export default function DashboardPage() {
   const searchParams = useSearchParams();
@@ -40,8 +42,11 @@ export default function DashboardPage() {
     setIsMounted(true);
   }, []);
 
-  // Mock available tags - in a real app, this would come from an API
-  const availableTags = ["work", "personal", "urgent", "shopping"];
+  // Fetch unique tags from API
+  const { data: availableTags = [] } = useQuery({
+    queryKey: ["tags", "unique"],
+    queryFn: () => apiClient.getUniqueTags(),
+  });
 
   // Load state from URL on mount (US5 - T071)
   useEffect(() => {
