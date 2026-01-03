@@ -30,6 +30,7 @@ htmlcov/
 
 # Logs
 *.log
+logs/  # FR-019: Agent audit logs directory
 
 # OS
 .DS_Store

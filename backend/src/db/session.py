@@ -24,3 +24,8 @@ def get_session() -> Generator[Session, None, None]:
         except Exception:
             session.rollback()
             raise
+
+
+def get_session_sync() -> Session:
+    """Create a synchronous database session for MCP tools."""
+    return Session(engine)

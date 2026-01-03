@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@openai/chatkit-react": "^1.4.0",
     "@vercel/analytics": "^1.6.1",
     "playwright": "^1.57.0"
   }
