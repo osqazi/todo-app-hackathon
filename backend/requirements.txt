@@ -33,3 +33,7 @@ ruff>=0.1.0
 
 # OpenAI Agent SDK
 openai>=1.0.0
+openai-agents>=0.6.0
+
+# Other
+mcp>=1.0.0
