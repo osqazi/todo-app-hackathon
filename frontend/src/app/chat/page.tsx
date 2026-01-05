@@ -24,13 +24,13 @@ export const metadata: Metadata = {
  */
 export default function ChatPage() {
   return (
-    <div className="flex flex-col h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="flex flex-col h-screen bg-gradient-to-br from-slate-900 via-indigo-900/20 to-slate-900">
       {/* Header with navigation */}
-      <header className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm">
+      <header className="flex items-center justify-between p-4 bg-gradient-to-r from-slate-800/80 to-slate-900/80 backdrop-blur-md border-b border-slate-700/50 shadow-2xl">
         <div className="flex items-center space-x-4">
           <Link
             href="/dashboard"
-            className="flex items-center text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
+            className="flex items-center text-sm text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-indigo-600/20 hover:to-purple-600/20 px-3 py-2 rounded-lg transition-all duration-300 font-semibold relative overflow-hidden"
           >
             <svg
               className="w-5 h-5 mr-1"
@@ -47,30 +47,30 @@ export default function ChatPage() {
             </svg>
             Back to Dashboard
           </Link>
-          <span className="text-gray-300 dark:text-gray-600">|</span>
-          <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
+          <span className="text-slate-500">|</span>
+          <h1 className="text-lg font-bold bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
             AI Task Assistant
           </h1>
         </div>
 
         <div className="flex items-center space-x-2">
-          <span className="text-xs text-gray-500 dark:text-gray-400">
+          <span className="text-xs text-slate-400 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 px-3 py-1.5 rounded-full border border-slate-600/30">
             Powered by OpenAI
           </span>
         </div>
       </header>
 
       {/* Main chat interface */}
-      <main className="flex-1 overflow-hidden">
-        <div className="h-full max-w-5xl mx-auto">
+      <main className="flex-1 overflow-hidden p-4">
+        <div className="h-full max-w-5xl mx-auto vibrant-card vibrant-fade-in overflow-hidden">
           <ChatInterface />
         </div>
       </main>
 
       {/* Footer */}
-      <footer className="p-3 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+      <footer className="p-3 bg-gradient-to-r from-slate-800/80 to-slate-900/80 border-t border-slate-700/50">
         <div className="max-w-5xl mx-auto">
-          <p className="text-xs text-center text-gray-500 dark:text-gray-400">
+          <p className="text-xs text-center text-slate-500">
             This AI assistant can create, update, complete, and delete tasks using natural language.
             All actions are performed securely on your behalf.
           </p>

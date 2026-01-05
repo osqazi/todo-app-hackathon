@@ -1,0 +1,313 @@
+/* Vibrant Dark Theme Design System */
+
+/* Color Variables */
+:root {
+  /* Primary Colors */
+  --vibrant-indigo: 99 102 241; /* #6366f1 */
+  --vibrant-purple: 139 92 230; /* #8b5cf6 */
+  --vibrant-blue: 59 130 246; /* #3b82f6 */
+  --vibrant-green: 16 185 129; /* #10b981 */
+  --vibrant-yellow: 245 158 11; /* #f59e0b */
+  --vibrant-red: 239 68 68; /* #ef4444 */
+  --vibrant-pink: 236 72 153; /* #ec4899 */
+
+  /* Background Colors */
+  --bg-primary: 15 23 42; /* #0f172a */
+  --bg-secondary: 30 41 59; /* #1e293b */
+  --bg-tertiary: 51 65 85; /* #334155 */
+
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, rgb(var(--vibrant-purple)), rgb(var(--vibrant-pink)));
+  --gradient-secondary: linear-gradient(135deg, rgb(var(--vibrant-yellow)), rgb(var(--vibrant-orange, 249 115 22)));
+  --gradient-tertiary: linear-gradient(135deg, rgb(var(--vibrant-blue)), rgb(var(--vibrant-cyan, 6 182 212)));
+  --gradient-success: linear-gradient(135deg, rgb(var(--vibrant-green)), rgb(var(--vibrant-emerald, 5 150 105)));
+  --gradient-warning: linear-gradient(135deg, rgb(var(--vibrant-yellow)), rgb(var(--vibrant-amber, 217 119 6)));
+  --gradient-danger: linear-gradient(135deg, rgb(var(--vibrant-red)), rgb(var(--vibrant-rose, 220 38 38)));
+  --gradient-info: linear-gradient(135deg, rgb(var(--vibrant-blue)), rgb(var(--vibrant-blue-800, 37 99 235)));
+}
+
+/* Vibrant Dark Theme Classes */
+.vibrant-dark {
+  --tw-bg-opacity: 1;
+  background-color: rgb(var(--bg-primary) / var(--tw-bg-opacity));
+  color: #f1f5f9;
+}
+
+/* Vibrant Button Styles */
+.vibrant-btn {
+  @apply inline-flex items-center justify-center rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-transparent;
+}
+
+.vibrant-btn-primary {
+  @apply bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5;
+}
+
+.vibrant-btn-secondary {
+  @apply bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white shadow-md hover:shadow-lg;
+}
+
+.vibrant-btn-success {
+  @apply bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white shadow-md hover:shadow-lg;
+}
+
+.vibrant-btn-danger {
+  @apply bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700 text-white shadow-md hover:shadow-lg;
+}
+
+.vibrant-btn-warning {
+  @apply bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 text-white shadow-md hover:shadow-lg;
+}
+
+.vibrant-btn-outline {
+  @apply border-2 border-transparent bg-transparent text-indigo-400 hover:bg-indigo-500/10 hover:border-indigo-500 shadow-sm hover:shadow-md;
+}
+
+.vibrant-btn-lg {
+  @apply px-6 py-3 text-base;
+}
+
+.vibrant-btn-md {
+  @apply px-4 py-2 text-sm;
+}
+
+.vibrant-btn-sm {
+  @apply px-3 py-1.5 text-xs;
+}
+
+/* Vibrant Card Styles */
+.vibrant-card {
+  @apply bg-gradient-to-b from-slate-800/50 to-slate-900/50 backdrop-blur-sm border border-slate-700/50 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1;
+}
+
+.vibrant-card-header {
+  @apply border-b border-slate-700/50 pb-4;
+}
+
+.vibrant-card-title {
+  @apply text-xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent;
+}
+
+.vibrant-card-content {
+  @apply py-4;
+}
+
+/* Vibrant Input Styles */
+.vibrant-input {
+  @apply w-full px-4 py-3 bg-slate-800/50 border border-slate-600 rounded-xl text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 shadow-sm;
+}
+
+.vibrant-input:focus {
+  @apply shadow-lg ring-4 ring-indigo-500/20;
+}
+
+.vibrant-input-error {
+  @apply border-red-500 focus:ring-red-500/20;
+}
+
+/* Vibrant Navigation */
+.vibrant-nav {
+  @apply bg-gradient-to-r from-slate-800/80 to-slate-900/80 backdrop-blur-md border-b border-slate-700/50 shadow-lg;
+}
+
+.vibrant-nav-item {
+  @apply px-4 py-3 text-slate-300 hover:text-white hover:bg-slate-700/30 rounded-lg transition-all duration-200 relative overflow-hidden;
+}
+
+.vibrant-nav-item.active {
+  @apply text-white bg-gradient-to-r from-indigo-600/30 to-purple-600/30 before:absolute before:inset-0 before:bg-gradient-to-r before:from-indigo-500/20 before:to-purple-500/20 before:opacity-0 hover:before:opacity-100;
+}
+
+/* Vibrant Metric Card Styles */
+.vibrant-metric-card {
+  @apply bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm border border-slate-700/50 rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1;
+}
+
+.vibrant-metric-card.total-tasks {
+  @apply from-indigo-900/30 to-purple-900/30 border-indigo-700/50;
+}
+
+.vibrant-metric-card.pending-tasks {
+  @apply from-yellow-900/30 to-amber-900/30 border-yellow-700/50;
+}
+
+.vibrant-metric-card.completed-tasks {
+  @apply from-green-900/30 to-emerald-900/30 border-green-700/50;
+}
+
+.vibrant-metric-card.overdue-tasks {
+  @apply from-red-900/30 to-rose-900/30 border-red-700/50;
+}
+
+.vibrant-metric-title {
+  @apply text-sm font-medium text-slate-400 mb-1;
+}
+
+.vibrant-metric-value {
+  @apply text-3xl font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent;
+}
+
+.vibrant-metric-desc {
+  @apply text-xs text-slate-500 mt-1;
+}
+
+/* Vibrant Badge Styles */
+.vibrant-badge {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wide;
+}
+
+.vibrant-badge-primary {
+  @apply bg-gradient-to-r from-indigo-500/20 to-purple-500/20 text-indigo-200 border border-indigo-500/30;
+}
+
+.vibrant-badge-success {
+  @apply bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-200 border border-green-500/30;
+}
+
+.vibrant-badge-warning {
+  @apply bg-gradient-to-r from-yellow-500/20 to-amber-500/20 text-yellow-200 border border-yellow-500/30;
+}
+
+.vibrant-badge-danger {
+  @apply bg-gradient-to-r from-red-500/20 to-rose-500/20 text-red-200 border border-red-500/30;
+}
+
+/* Vibrant Task Card */
+.vibrant-task-card {
+  @apply bg-gradient-to-b from-slate-800/40 to-slate-900/40 backdrop-blur-sm border border-slate-700/40 rounded-xl p-5 shadow-lg hover:shadow-xl transition-all duration-300;
+}
+
+.vibrant-task-card.completed {
+  @apply opacity-70;
+}
+
+/* Vibrant Animation Classes */
+.vibrant-fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.vibrant-slide-up {
+  animation: slideUp 0.3s ease-out;
+}
+
+.vibrant-pulse {
+  animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.vibrant-pulse-glow {
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(99, 102, 241, 0);
+  }
+}
+
+/* Responsive Utilities */
+.vibrant-container {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+.vibrant-grid-1 {
+  @apply grid grid-cols-1 gap-4;
+}
+
+.vibrant-grid-2 {
+  @apply grid grid-cols-1 sm:grid-cols-2 gap-4;
+}
+
+.vibrant-grid-3 {
+  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4;
+}
+
+.vibrant-grid-4 {
+  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4;
+}
+
+/* Vibrant Loading Spinner */
+.vibrant-spinner {
+  @apply animate-spin h-5 w-5 text-current;
+}
+
+.vibrant-spinner-lg {
+  @apply animate-spin h-8 w-8 text-current;
+}
+
+/* Vibrant Notification Styles */
+.vibrant-notification {
+  @apply bg-gradient-to-r from-slate-800/80 to-slate-900/80 backdrop-blur-sm border border-slate-700/50 rounded-xl p-4 shadow-lg;
+}
+
+.vibrant-notification-success {
+  @apply from-green-900/30 to-emerald-900/30 border-green-700/50;
+}
+
+.vibrant-notification-warning {
+  @apply from-yellow-900/30 to-amber-900/30 border-yellow-700/50;
+}
+
+.vibrant-notification-error {
+  @apply from-red-900/30 to-rose-900/30 border-red-700/50;
+}
+
+.vibrant-notification-info {
+  @apply from-blue-900/30 to-indigo-900/30 border-blue-700/50;
+}
+
+/* Vibrant Form Elements */
+.vibrant-form-group {
+  @apply mb-6;
+}
+
+.vibrant-form-label {
+  @apply block text-sm font-semibold text-slate-300 mb-2;
+}
+
+.vibrant-form-error {
+  @apply text-red-400 text-sm mt-1;
+}
+
+/* Vibrant Chat Interface */
+.vibrant-chat-container {
+  @apply bg-gradient-to-b from-slate-800/40 to-slate-900/40 backdrop-blur-sm border border-slate-700/40 rounded-2xl shadow-xl h-full flex flex-col;
+}
+
+.vibrant-message {
+  @apply p-4 rounded-xl mb-3 max-w-[85%] shadow-sm;
+}
+
+.vibrant-message-user {
+  @apply bg-gradient-to-r from-indigo-600/30 to-purple-600/30 border border-indigo-500/30 ml-auto;
+}
+
+.vibrant-message-assistant {
+  @apply bg-gradient-to-r from-slate-700/50 to-slate-800/50 border border-slate-600/50;
+}
+
+.vibrant-chat-input {
+  @apply bg-slate-800/50 border border-slate-600 rounded-xl px-4 py-3 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent;
+}

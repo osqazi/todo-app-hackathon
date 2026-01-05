@@ -60,7 +60,7 @@ export default function RecurrenceConfig({
   };
 
   return (
-    <div className="space-y-3 p-4 bg-gray-50 rounded-lg border border-gray-200">
+    <div className="space-y-3 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
       {/* Enable Recurring Checkbox */}
       <div className="flex items-center gap-2">
         <input
@@ -69,11 +69,11 @@ export default function RecurrenceConfig({
           checked={isRecurring}
           onChange={(e) => handleRecurringToggle(e.target.checked)}
           disabled={disabled}
-          className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+          className="w-4 h-4 text-blue-600 border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-blue-500"
         />
         <label
           htmlFor="is-recurring"
-          className="text-sm font-medium text-gray-700 cursor-pointer"
+          className="text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer"
         >
           Recurring Task
         </label>
@@ -81,8 +81,8 @@ export default function RecurrenceConfig({
 
       {/* Pattern Selector (shown when recurring enabled) */}
       {isRecurring && (
-        <div className="space-y-2 pl-6 border-l-2 border-blue-200">
-          <label className="block text-sm font-medium text-gray-700">
+        <div className="space-y-2 pl-6 border-l-2 border-blue-200 dark:border-blue-700">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
             Repeat Every
             <span className="text-red-500 ml-1">*</span>
           </label>
@@ -99,9 +99,9 @@ export default function RecurrenceConfig({
                   checked={pattern === p}
                   onChange={() => setPattern(p)}
                   disabled={disabled}
-                  className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-2 focus:ring-blue-500"
+                  className="w-4 h-4 text-blue-600 border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500"
                 />
-                <span className="text-sm text-gray-700 capitalize">{p}</span>
+                <span className="text-sm text-gray-700 dark:text-gray-300 capitalize">{p}</span>
               </label>
             ))}
           </div>
@@ -110,7 +110,7 @@ export default function RecurrenceConfig({
           <div className="mt-3">
             <label
               htmlFor="recurrence-end-date"
-              className="block text-sm font-medium text-gray-700 mb-1"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
             >
               End Date (optional)
             </label>
@@ -121,28 +121,28 @@ export default function RecurrenceConfig({
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
                 disabled={disabled}
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
               {endDate && (
                 <button
                   type="button"
                   onClick={() => setEndDate("")}
                   disabled={disabled}
-                  className="px-2 py-1 text-sm text-gray-500 hover:text-gray-700"
+                  className="px-2 py-1 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
                   title="Clear end date"
                 >
                   ✕
                 </button>
               )}
             </div>
-            <p className="mt-1 text-xs text-gray-500">
+            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
               Leave empty for recurring indefinitely
             </p>
           </div>
 
           {/* Preview Text */}
           {pattern && (
-            <div className="mt-3 p-2 bg-blue-50 border border-blue-200 rounded text-sm text-blue-800">
+            <div className="mt-3 p-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded text-sm text-blue-800 dark:text-blue-200">
               <strong>Preview:</strong> This task will repeat{" "}
               <strong>{pattern}</strong>
               {endDate ? ` until ${new Date(endDate).toLocaleDateString()}` : " indefinitely"}

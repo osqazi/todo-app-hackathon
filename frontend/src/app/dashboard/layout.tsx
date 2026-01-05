@@ -41,9 +41,13 @@ export default async function DashboardLayout({
   const user = sessionResult.user;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
       <DashboardHeader user={user} />
-      <main className="max-w-7xl mx-auto px-4 py-8">{children}</main>
+      <main className="max-w-7xl mx-auto px-4 py-8">
+        <div className="max-w-7xl mx-auto">
+          {children}
+        </div>
+      </main>
     </div>
   );
 }

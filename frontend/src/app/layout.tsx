@@ -1,12 +1,13 @@
 /**
  * Root layout for Next.js application.
  *
- * Providers: AuthProvider, QueryClientProvider
+ * Providers: ThemeProvider, AuthProvider, QueryClientProvider
  */
 
 import type { Metadata } from "next";
 import { AuthProvider } from "@/context/AuthContext";
 import { QueryClientProviderWrapper } from "@/components/providers/QueryClientProvider";
+import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import "./globals.css";
 import { Analytics } from '@vercel/analytics/next';
 
@@ -21,12 +22,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body>
-        <AuthProvider>
-          <QueryClientProviderWrapper>{children} <Analytics /></QueryClientProviderWrapper>
-        </AuthProvider>
-        
+    <html lang="en" suppressHydrationWarning>
+      <body className="bg-gradient-to-br from-slate-900 via-indigo-900/20 to-slate-900 text-slate-100">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <AuthProvider>
+            <QueryClientProviderWrapper>{children} <Analytics /></QueryClientProviderWrapper>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -1,5 +1,5 @@
 /**
- * Enhanced Task Form component with due date support.
+ * Enhanced Task Form component with vibrant dark theme and due date support.
  *
  * Input for task title, priority, tags, and due date with validation.
  */
@@ -11,6 +11,9 @@ import { PrioritySelector, Priority } from "./PrioritySelector";
 import { TagInput } from "./TagInput";
 import DateTimePicker from "./DateTimePicker";
 import RecurrenceConfig, { RecurrenceSettings } from "./RecurrenceConfig";
+import { VibrantButton } from "@/components/ui/vibrant/VibrantButton";
+import { VibrantCard, VibrantCardHeader, VibrantCardTitle, VibrantCardContent, VibrantCardDescription } from "@/components/ui/vibrant/VibrantCard";
+import { VibrantInput } from "@/components/ui/vibrant/VibrantInput";
 
 interface TaskFormProps {
   onSubmit: (data: {
@@ -95,90 +98,116 @@ export function TaskForm({ onSubmit, isSubmitting = false }: TaskFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white border border-gray-200 rounded-lg p-4 mb-6 space-y-4">
-      <h3 className="text-lg font-semibold text-gray-900">Create New Task</h3>
-
-      {/* Title input */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Task Title *
-        </label>
-        <input
-          type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder="What needs to be done?"
-          disabled={loading}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
-        />
-      </div>
-
-      {/* Description input */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Description (optional)
-        </label>
-        <textarea
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          placeholder="Add more details..."
-          disabled={loading}
-          rows={2}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
-        />
-      </div>
-
-      {/* Priority and Due Date row */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <PrioritySelector
-          value={priority}
-          onChange={setPriority}
-          disabled={loading}
-        />
-        <DateTimePicker
-          selected={dueDate}
-          onChange={setDueDate}
-          label="Due Date (optional)"
-          minDate={new Date()}
-          placeholderText="Select due date and time"
-        />
-      </div>
-
-      {/* Tags */}
-      <div>
-        <TagInput
-          tags={tags}
-          onChange={setTags}
-          disabled={loading}
-        />
-      </div>
-
-      {/* Recurrence Configuration (US4 - T065) */}
-      <div>
-        <RecurrenceConfig
-          value={recurrence}
-          onChange={setRecurrence}
-          disabled={loading}
-        />
-      </div>
-
-      {/* Error message */}
-      {error && (
-        <div className="bg-red-50 border border-red-200 rounded-md p-3">
-          <p className="text-sm text-red-600">{error}</p>
+    <form onSubmit={handleSubmit} className="card-vibrant mb-6 animate-fade-in">
+      <VibrantCardHeader className="pb-4">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
+          </div>
+          <div>
+            <VibrantCardTitle className="text-2xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+              Create New Task
+            </VibrantCardTitle>
+            <VibrantCardDescription className="text-slate-500 dark:text-slate-400">
+              Add a new task to your productivity dashboard
+            </VibrantCardDescription>
+          </div>
         </div>
-      )}
+      </VibrantCardHeader>
 
-      {/* Submit button */}
-      <div className="flex justify-end">
-        <button
-          type="submit"
-          disabled={loading || isSubmitting || !title.trim()}
-          className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed transition-colors font-medium"
-        >
-          {(loading || isSubmitting) ? "Adding..." : "Add Task"}
-        </button>
-      </div>
+      <VibrantCardContent className="space-y-6">
+        {/* Title input */}
+        <div>
+          <VibrantInput
+            type="text"
+            label="Task Title *"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="What needs to be done?"
+            disabled={loading}
+            className="w-full"
+          />
+        </div>
+
+        {/* Description input */}
+        <div>
+          <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+            Description (optional)
+          </label>
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Add more details..."
+            disabled={loading}
+            rows={3}
+            className="input-vibrant w-full border-2 border-slate-300 dark:border-slate-600 focus:border-indigo-500 dark:focus:border-indigo-400 text-gray-900 dark:text-white"
+          />
+        </div>
+
+        {/* Priority and Due Date row */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div>
+            <PrioritySelector
+              value={priority}
+              onChange={setPriority}
+              disabled={loading}
+            />
+          </div>
+          <div>
+            <DateTimePicker
+              selected={dueDate}
+              onChange={setDueDate}
+              label="Due Date (optional)"
+              minDate={new Date()}
+              placeholderText="Select due date and time"
+            />
+          </div>
+        </div>
+
+        {/* Tags */}
+        <div>
+          <TagInput
+            tags={tags}
+            onChange={setTags}
+            disabled={loading}
+          />
+        </div>
+
+        {/* Recurrence Configuration (US4 - T065) */}
+        <div>
+          <RecurrenceConfig
+            value={recurrence}
+            onChange={setRecurrence}
+            disabled={loading}
+          />
+        </div>
+
+        {/* Error message */}
+        {error && (
+          <div className="notification notification-error rounded-lg p-3 animate-fade-in">
+            <div className="flex items-center gap-3">
+              <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <p className="text-sm font-medium">{error}</p>
+            </div>
+          </div>
+        )}
+
+        {/* Submit button */}
+        <div className="flex justify-end pt-4 border-t border-slate-700">
+          <VibrantButton
+            type="submit"
+            loading={loading || isSubmitting}
+            disabled={!title.trim()}
+            className="px-6 py-3 text-base font-semibold"
+          >
+            {loading || isSubmitting ? "Adding Task..." : "Add Task"}
+          </VibrantButton>
+        </div>
+      </VibrantCardContent>
     </form>
   );
 }

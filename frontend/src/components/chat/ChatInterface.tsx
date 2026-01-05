@@ -1,5 +1,5 @@
 /**
- * ChatInterface component for AI-powered task management.
+ * ChatInterface component for AI-powered task management with vibrant dark theme.
  *
  * This component provides the main chat interface using OpenAI ChatKit
  * for natural language task management.
@@ -10,6 +10,9 @@
 import { useState, useEffect } from 'react';
 import { ChatMessage, ChatResponse, ChatRequest } from '@/types/chat';
 import { getToken } from '@/lib/auth/helpers';
+import { VibrantButton } from '@/components/ui/vibrant/VibrantButton';
+import { VibrantCard, VibrantCardHeader, VibrantCardTitle, VibrantCardContent } from '@/components/ui/vibrant/VibrantCard';
+import { Sparkles, MessageCircle, RotateCcw } from 'lucide-react';
 
 /**
  * ChatInterface component.
@@ -250,85 +253,110 @@ export default function ChatInterface() {
   };
 
   return (
-    <div className="flex flex-col h-full bg-white dark:bg-gray-900">
+    <VibrantCard className="chat-container h-full flex flex-col">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-          AI Task Assistant
-        </h2>
+      <VibrantCardHeader className="flex items-center justify-between p-4 border-b border-slate-700">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
+            <Sparkles className="w-5 h-5 text-white" />
+          </div>
+          <VibrantCardTitle className="text-xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+            AI Task Assistant
+          </VibrantCardTitle>
+        </div>
         <div className="flex items-center gap-3">
           {/* Streaming Toggle */}
-          <label className="flex items-center gap-2 cursor-pointer text-sm text-gray-600 dark:text-gray-400">
+          <label className="flex items-center gap-2 cursor-pointer text-sm text-slate-300">
             <input
               type="checkbox"
               checked={useStreaming}
               onChange={(e) => setUseStreaming(e.target.checked)}
-              className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+              className="w-4 h-4 text-indigo-500 bg-slate-700 border-slate-600 rounded focus:ring-indigo-500 focus:ring-2"
             />
             <span>Streaming</span>
           </label>
-          <button
+          <VibrantButton
             onClick={startNewConversation}
-            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700"
+            variant="outline"
+            size="sm"
+            className="text-sm"
           >
-            New Conversation
-          </button>
+            <RotateCcw className="w-4 h-4 mr-1" />
+            New
+          </VibrantButton>
         </div>
-      </div>
+      </VibrantCardHeader>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <VibrantCardContent className="flex-1 overflow-y-auto p-4 space-y-4 flex flex-col">
         {messages.length === 0 ? (
-          <div className="text-center text-gray-500 dark:text-gray-400 mt-8">
-            <p className="text-lg font-medium mb-2">Welcome to your AI Task Assistant!</p>
-            <p className="text-sm">Ask me to create, update, or manage your tasks using natural language.</p>
-            <div className="mt-4 text-xs text-left max-w-md mx-auto space-y-1">
-              <p className="font-medium">Try commands like:</p>
-              <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-400">
-                <li>"Add a task to buy groceries"</li>
-                <li>"Show me all my high-priority tasks"</li>
-                <li>"Mark task 5 as complete"</li>
-                <li>"Update task 3 to 'Call client tomorrow at 2 PM'"</li>
+          <div className="flex-1 flex flex-col items-center justify-center text-center text-slate-400">
+            <div className="w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center mb-4">
+              <MessageCircle className="w-8 h-8 text-white" />
+            </div>
+            <p className="text-lg font-semibold text-slate-100 mb-2">Welcome to your AI Task Assistant!</p>
+            <p className="text-slate-300 mb-6">Ask me to create, update, or manage your tasks using natural language.</p>
+            <div className="bg-gradient-to-r from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-xl p-4 border border-slate-700 max-w-md w-full">
+              <p className="font-semibold text-slate-200 mb-2">Try commands like:</p>
+              <ul className="space-y-2 text-left">
+                <li className="flex items-start gap-2">
+                  <span className="text-indigo-400 mt-1">•</span>
+                  <span className="text-slate-200">"Add a task to buy groceries"</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-indigo-400 mt-1">•</span>
+                  <span className="text-slate-200">"Show me all my high-priority tasks"</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-indigo-400 mt-1">•</span>
+                  <span className="text-slate-200">"Mark task 5 as complete"</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-indigo-400 mt-1">•</span>
+                  <span className="text-slate-200">"Update task 3 to 'Call client tomorrow at 2 PM'"</span>
+                </li>
               </ul>
             </div>
           </div>
         ) : (
-          messages.map((msg, index) => (
-            <div
-              key={index}
-              className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
-            >
+          <div className="space-y-4">
+            {messages.map((msg, index) => (
               <div
-                className={`max-w-[70%] rounded-lg px-4 py-2 ${
-                  msg.role === 'user'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100'
-                }`}
+                key={index}
+                className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
               >
-                <p className="whitespace-pre-wrap">{msg.content}</p>
-                {msg.tool_calls && msg.tool_calls.length > 0 && (
-                  <div className="mt-2 pt-2 border-t border-gray-300 dark:border-gray-600 text-xs opacity-75">
-                    <p className="font-medium">Tools used:</p>
-                    <ul className="list-disc list-inside">
-                      {msg.tool_calls.map((call, i) => (
-                        <li key={i}>{call.tool_name}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
+                <div
+                  className={`max-w-[85%] rounded-2xl px-5 py-3 ${
+                    msg.role === 'user'
+                      ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-br-none shadow-lg'
+                      : 'bg-gradient-to-r from-slate-700 to-slate-800 text-slate-100 rounded-bl-none shadow-md'
+                  }`}
+                >
+                  <p className="whitespace-pre-wrap">{msg.content}</p>
+                  {msg.tool_calls && msg.tool_calls.length > 0 && (
+                    <div className="mt-3 pt-3 border-t border-slate-600 text-xs opacity-75">
+                      <p className="font-medium text-slate-200">Tools used:</p>
+                      <ul className="list-disc list-inside">
+                        {msg.tool_calls.map((call, i) => (
+                          <li key={i} className="text-slate-300">{call.tool_name}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          ))
+            ))}
+          </div>
         )}
 
         {/* Loading indicator */}
         {isLoading && (
           <div className="flex justify-start">
-            <div className="bg-gray-100 dark:bg-gray-800 rounded-lg px-4 py-2">
+            <div className="bg-gradient-to-r from-slate-700 to-slate-800 rounded-2xl px-5 py-3 rounded-bl-none shadow-md">
               <div className="flex items-center space-x-2">
-                <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"></div>
-                <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                <div className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce"></div>
+                <div className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                <div className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
               </div>
             </div>
           </div>
@@ -336,15 +364,15 @@ export default function ChatInterface() {
 
         {/* Error message */}
         {error && (
-          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
-            <p className="text-sm text-red-800 dark:text-red-200">{error}</p>
+          <div className="bg-gradient-to-r from-red-500/10 to-rose-500/10 border border-red-500/20 rounded-xl p-4 animate-fade-in backdrop-blur-sm">
+            <p className="text-red-200">{error}</p>
           </div>
         )}
-      </div>
+      </VibrantCardContent>
 
       {/* Input */}
-      <form onSubmit={handleSubmit} className="p-4 border-t border-gray-200 dark:border-gray-700">
-        <div className="flex space-x-2">
+      <div className="p-4 border-t border-slate-700">
+        <form onSubmit={handleSubmit} className="flex space-x-2">
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -352,20 +380,20 @@ export default function ChatInterface() {
             placeholder="Type your message... (Enter to send, Shift+Enter for new line)"
             disabled={isLoading}
             rows={2}
-            className="flex-1 resize-none rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+            className="flex-1 resize-none rounded-xl border-2 border-slate-700 bg-slate-800 px-4 py-3 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 disabled:opacity-50"
           />
-          <button
+          <VibrantButton
             type="submit"
             disabled={isLoading || !input.trim()}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-6 py-3 text-base font-semibold"
           >
             Send
-          </button>
-        </div>
-        <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+          </VibrantButton>
+        </form>
+        <p className="mt-2 text-xs text-slate-400 text-center">
           Your conversations are saved automatically. Use natural language to manage your tasks.
         </p>
-      </form>
-    </div>
+      </div>
+    </VibrantCard>
   );
 }

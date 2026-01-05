@@ -53,29 +53,29 @@ export function PrioritySelector({
 
   return (
     <div className="priority-selector relative">
-      <label className="block text-sm font-medium text-gray-700 mb-1">
+      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
         Priority
       </label>
       <button
         type="button"
         onClick={() => !disabled && setIsOpen(!isOpen)}
         disabled={disabled}
-        className="w-full px-4 py-2 text-left bg-white border border-gray-300 rounded-lg hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors"
+        className="w-full px-4 py-2 text-left bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:border-gray-400 dark:hover:border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 dark:disabled:bg-gray-700 disabled:cursor-not-allowed transition-colors"
       >
-        <span className={`flex items-center gap-2 ${selectedOption?.color}`}>
+        <span className={`flex items-center gap-2 ${selectedOption?.color} text-gray-900 dark:text-white`}>
           <span className="priority-indicator">●</span>
           <span>{selectedOption?.label || "Select Priority"}</span>
         </span>
       </button>
 
       {isOpen && !disabled && (
-        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg">
+        <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg">
           {priorityOptions.map((option) => (
             <button
               key={option.value}
               type="button"
               onClick={() => handleSelect(option.value)}
-              className={`w-full px-4 py-2 text-left hover:bg-gray-50 first:rounded-t-lg last:rounded-b-lg transition-colors ${option.color}`}
+              className={`w-full px-4 py-2 text-left hover:bg-gray-50 dark:hover:bg-gray-700 first:rounded-t-lg last:rounded-b-lg transition-colors ${option.color} text-gray-900 dark:text-white`}
             >
               <span className="flex items-center gap-2">
                 <span className="priority-indicator">●</span>

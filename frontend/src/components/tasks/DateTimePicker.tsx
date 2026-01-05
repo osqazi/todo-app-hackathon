@@ -39,9 +39,9 @@ export default function DateTimePicker({
       type="button"
       onClick={onClick}
       ref={ref}
-      className={`w-full px-3 py-2 border border-gray-300 rounded-md text-left focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${className}`}
+      className={`w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-left text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${className}`}
     >
-      {value || <span className="text-gray-400">{placeholderText}</span>}
+      {value || <span className="text-gray-400 dark:text-gray-500">{placeholderText}</span>}
     </button>
   ));
   CustomInput.displayName = "CustomInput";
@@ -49,7 +49,7 @@ export default function DateTimePicker({
   return (
     <div className="space-y-1">
       {label && (
-        <label className="block text-sm font-medium text-gray-700">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
           {label}
         </label>
       )}
@@ -66,11 +66,11 @@ export default function DateTimePicker({
           customInput={<CustomInput />}
           className={className}
           wrapperClassName="w-full"
-          calendarClassName="shadow-lg border border-gray-200"
+          calendarClassName="shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
         />
       </div>
       {selected && (
-        <p className="text-xs text-gray-500">
+        <p className="text-xs text-gray-500 dark:text-gray-400">
           Selected: {selected.toLocaleString()}
         </p>
       )}

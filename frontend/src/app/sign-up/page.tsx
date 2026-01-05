@@ -1,5 +1,5 @@
 /**
- * Sign-up page with email/password registration.
+ * Sign-up page with vibrant dark theme registration.
  */
 
 "use client";
@@ -8,6 +8,9 @@ import { useState } from "react";
 import { signUp } from "@/lib/auth/helpers";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { VibrantButton } from "@/components/ui/vibrant/VibrantButton";
+import { VibrantCard, VibrantCardHeader, VibrantCardTitle, VibrantCardContent } from "@/components/ui/vibrant/VibrantCard";
+import { VibrantInput } from "@/components/ui/vibrant/VibrantInput";
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -65,93 +68,100 @@ export default function SignUpPage() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24">
+    <main className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-slate-900 via-indigo-900 to-purple-900">
       <div className="w-full max-w-md">
-        <h1 className="text-3xl font-bold mb-8 text-center">Create Account</h1>
+        <VibrantCard className="animate-fade-in">
+          <VibrantCardHeader className="text-center">
+            <VibrantCardTitle className="text-3xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+              Create Account
+            </VibrantCardTitle>
+            <p className="text-slate-500 dark:text-slate-400 mt-2">
+              Join us to start managing your tasks
+            </p>
+          </VibrantCardHeader>
+          <VibrantCardContent>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div>
+                <VibrantInput
+                  id="name"
+                  type="text"
+                  label="Full Name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                  placeholder="Your name"
+                  className="w-full"
+                />
+              </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium mb-1">
-              Name
-            </label>
-            <input
-              id="name"
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-              placeholder="Your name"
-            />
-          </div>
+              <div>
+                <VibrantInput
+                  id="email"
+                  type="email"
+                  label="Email Address"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  placeholder="you@example.com"
+                  className="w-full"
+                />
+              </div>
 
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium mb-1">
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-              placeholder="you@example.com"
-            />
-          </div>
+              <div>
+                <VibrantInput
+                  id="password"
+                  type="password"
+                  label="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  minLength={8}
+                  placeholder="At least 8 characters"
+                  className="w-full"
+                />
+              </div>
 
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium mb-1">
-              Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              minLength={8}
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-              placeholder="At least 8 characters"
-            />
-          </div>
+              <div>
+                <VibrantInput
+                  id="confirmPassword"
+                  type="password"
+                  label="Confirm Password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                  placeholder="Confirm your password"
+                  className="w-full"
+                />
+              </div>
 
-          <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-medium mb-1">
-              Confirm Password
-            </label>
-            <input
-              id="confirmPassword"
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-              placeholder="Confirm your password"
-            />
-          </div>
+              {error && (
+                <div className="notification notification-error rounded-lg p-3 animate-fade-in">
+                  <div className="flex items-center gap-3">
+                    <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <p className="text-sm font-medium">{error}</p>
+                  </div>
+                </div>
+              )}
 
-          {error && (
-            <div className="p-3 bg-red-100 text-red-700 rounded-lg text-sm">
-              {error}
+              <VibrantButton
+                type="submit"
+                loading={loading}
+                className="w-full py-3 text-base font-semibold"
+              >
+                {loading ? "Creating account..." : "Create Account"}
+              </VibrantButton>
+            </form>
+
+            <div className="mt-6 text-center text-sm text-slate-500 dark:text-slate-400">
+              Already have an account?{" "}
+              <Link href="/sign-in" className="text-indigo-400 hover:text-indigo-300 font-medium hover:underline transition-colors">
+                Sign in
+              </Link>
             </div>
-          )}
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
-          >
-            {loading ? "Creating account..." : "Create Account"}
-          </button>
-        </form>
-
-        <p className="mt-4 text-center text-sm text-gray-600">
-          Already have an account?{" "}
-          <Link href="/sign-in" className="text-blue-600 hover:underline">
-            Sign in
-          </Link>
-        </p>
+          </VibrantCardContent>
+        </VibrantCard>
       </div>
     </main>
   );

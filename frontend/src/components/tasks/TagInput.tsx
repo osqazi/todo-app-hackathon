@@ -80,7 +80,7 @@ export function TagInput({
 
   return (
     <div className="tag-input">
-      <label className="block text-sm font-medium text-gray-700 mb-1">
+      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
         Tags {tags.length > 0 && `(${tags.length}/${maxTags})`}
       </label>
 
@@ -90,14 +90,14 @@ export function TagInput({
           {tags.map((tag, index) => (
             <span
               key={index}
-              className="tag-chip inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
+              className="tag-chip inline-flex items-center gap-1 px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 rounded-full text-sm border border-blue-200 dark:border-blue-800"
             >
               <span>{tag}</span>
               <button
                 type="button"
                 onClick={() => handleRemoveTag(index)}
                 disabled={disabled}
-                className="tag-remove hover:text-blue-900 disabled:cursor-not-allowed"
+                className="tag-remove hover:text-blue-900 dark:hover:text-blue-100 disabled:cursor-not-allowed"
                 aria-label={`Remove ${tag} tag`}
               >
                 ×
@@ -119,7 +119,7 @@ export function TagInput({
           onKeyDown={handleKeyDown}
           placeholder="Add a tag..."
           disabled={disabled || tags.length >= maxTags}
-          className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+          className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 dark:disabled:bg-gray-700 disabled:cursor-not-allowed text-gray-900 dark:text-white"
         />
         <button
           type="button"
@@ -132,11 +132,11 @@ export function TagInput({
       </div>
 
       {/* Error message */}
-      {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
+      {error && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{error}</p>}
 
       {/* Helper text */}
       {!error && (
-        <p className="mt-1 text-xs text-gray-500">
+        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
           Press Enter to add a tag. Use letters, numbers, hyphens, and
           underscores only.
         </p>

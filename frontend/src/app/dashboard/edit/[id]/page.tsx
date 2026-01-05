@@ -4,11 +4,18 @@
  * Edit Task page - dedicated page for editing existing tasks
  */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api";
 import Link from "next/link";
+import { VibrantButton } from "@/components/ui/vibrant/VibrantButton";
+import { VibrantCard, VibrantCardHeader, VibrantCardTitle, VibrantCardContent } from "@/components/ui/vibrant/VibrantCard";
+import { VibrantInput } from "@/components/ui/vibrant/VibrantInput";
+import { PrioritySelector, Priority as TaskPriority } from "@/components/tasks/PrioritySelector";
+import DateTimePicker from "@/components/tasks/DateTimePicker";
+import { TagInput } from "@/components/tasks/TagInput";
+import RecurrenceConfig, { RecurrenceSettings } from "@/components/tasks/RecurrenceConfig";
 
 type Priority = "high" | "medium" | "low";
 
@@ -72,6 +79,25 @@ export default function EditTaskPage() {
       });
     }
   }, [task]);
+
+  // Memoize recurrence value to avoid infinite loop - use timestamp for date comparison
+  const recurrenceValue = useMemo(() => ({
+    is_recurring: formData.is_recurring,
+    recurrence_pattern: formData.recurrence_pattern,
+    recurrence_end_date: formData.recurrence_end_date,
+  }), [formData.is_recurring, formData.recurrence_pattern, formData.recurrence_end_date?.getTime()]);
+
+  // Ref to store previous recurrence value to prevent unnecessary updates
+  const prevRecurrenceValue = useRef(recurrenceValue);
+
+  // Update the ref when formData changes to keep it in sync
+  useEffect(() => {
+    prevRecurrenceValue.current = {
+      is_recurring: formData.is_recurring,
+      recurrence_pattern: formData.recurrence_pattern,
+      recurrence_end_date: formData.recurrence_end_date,
+    };
+  }, [formData.is_recurring, formData.recurrence_pattern, formData.recurrence_end_date]);
 
   // Update task mutation
   const updateTaskMutation = useMutation({
@@ -192,10 +218,10 @@ export default function EditTaskPage() {
     <div className="max-w-3xl mx-auto space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-gray-900">Edit Task</h1>
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">Edit Task</h1>
         <Link
           href="/dashboard"
-          className="text-sm text-gray-600 hover:text-gray-900 flex items-center gap-2"
+          className="text-sm text-slate-600 hover:text-slate-300 flex items-center gap-2"
         >
           <svg
             className="w-4 h-4"
@@ -216,10 +242,147 @@ export default function EditTaskPage() {
 
       {/* Error Message */}
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+        <div className="notification notification-error rounded-lg p-3 animate-fade-in">
+          <div className="flex items-center gap-3">
+            <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <p className="text-sm font-medium">{error}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Form */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <form onSubmit={handleSubmit} className="card-vibrant mb-6 animate-fade-in">
+          <VibrantCardHeader className="pb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 012-2h9a2 2 0 01-2 2h-1z" />
+                </svg>
+              </div>
+              <div>
+                <VibrantCardTitle className="text-2xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+                  Edit Task
+                </VibrantCardTitle>
+                <p className="text-slate-500 dark:text-slate-400">
+                  Update your existing task details
+                </p>
+              </div>
+            </div>
+          </VibrantCardHeader>
+
+          <VibrantCardContent className="space-y-6">
+
+          {/* Title input */}
+          <VibrantInput
+            type="text"
+            label="Task Title *"
+            value={formData.title}
+            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+            placeholder="What needs to be done?"
+            disabled={updateTaskMutation.isPending}
+          />
+
+          {/* Description input */}
+          <div>
+            <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+              Description (optional)
+            </label>
+            <textarea
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              placeholder="Add more details..."
+              disabled={updateTaskMutation.isPending}
+              rows={3}
+              className="input-vibrant w-full border-2 border-slate-300 dark:border-slate-600 focus:border-indigo-500 dark:focus:border-indigo-400 rounded-lg text-gray-900 dark:text-white"
+            />
+          </div>
+
+          {/* Priority and Due Date row */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+              <PrioritySelector
+                value={formData.priority}
+                onChange={(value) => setFormData({ ...formData, priority: value as TaskPriority })}
+                disabled={updateTaskMutation.isPending}
+              />
+            </div>
+            <div>
+              <DateTimePicker
+                selected={formData.due_date}
+                onChange={(date) => setFormData({ ...formData, due_date: date })}
+                label="Due Date (optional)"
+                minDate={new Date()}
+                placeholderText="Select due date and time"
+              />
+            </div>
+          </div>
+
+          {/* Tags */}
+          <TagInput
+            tags={formData.tags}
+            onChange={(tags) => setFormData({ ...formData, tags })}
+            disabled={updateTaskMutation.isPending}
+            maxTags={10}
+          />
+
+          {/* Recurrence Configuration */}
+          <RecurrenceConfig
+            value={recurrenceValue}
+            onChange={(value) => {
+              // Only update if the values are actually different to prevent infinite loop
+              const prevValue = prevRecurrenceValue.current;
+              if (
+                prevValue.is_recurring !== value.is_recurring ||
+                prevValue.recurrence_pattern !== value.recurrence_pattern ||
+                (prevValue.recurrence_end_date?.toISOString() !== value.recurrence_end_date?.toISOString())
+              ) {
+                setFormData(prev => ({
+                  ...prev,
+                  is_recurring: value.is_recurring,
+                  recurrence_pattern: value.recurrence_pattern,
+                  recurrence_end_date: value.recurrence_end_date,
+                }));
+
+                // Update the ref with new value
+                prevRecurrenceValue.current = value;
+              }
+            }}
+            disabled={updateTaskMutation.isPending}
+          />
+
+          {/* Action Buttons */}
+          <div className="flex items-center justify-between pt-4 border-t border-slate-700">
+            <VibrantButton
+              type="button"
+              onClick={() => setShowDeleteConfirm(true)}
+              disabled={deleteTaskMutation.isPending}
+              variant="danger"
+              className="px-6 py-3 text-base font-semibold"
+            >
+              {deleteTaskMutation.isPending ? "Deleting..." : "Delete Task"}
+            </VibrantButton>
+            <VibrantButton
+              type="submit"
+              disabled={updateTaskMutation.isPending || !formData.title.trim()}
+              loading={updateTaskMutation.isPending}
+              className="px-6 py-3 text-base font-semibold"
+            >
+              {updateTaskMutation.isPending ? "Saving..." : "Save Changes"}
+            </VibrantButton>
+          </div>
+        </VibrantCardContent>
+      </form>
+    </div>
+
+      {/* Help Text */}
+      <VibrantCard className="animate-fade-in">
+        <div className="p-4">
           <div className="flex items-start gap-3">
             <svg
-              className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0"
+              className="w-5 h-5 text-indigo-400 mt-0.5 flex-shrink-0"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -228,285 +391,49 @@ export default function EditTaskPage() {
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth={2}
-                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
               />
             </svg>
             <div className="flex-1">
-              <h3 className="text-sm font-medium text-red-900">Error</h3>
-              <p className="mt-1 text-sm text-red-700">{error}</p>
+              <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300">Quick Tips</h3>
+              <ul className="mt-2 text-sm text-slate-600 dark:text-slate-400 list-disc list-inside space-y-1">
+                <li>Use descriptive titles to easily identify tasks later</li>
+                <li>Set priorities to help organize your work</li>
+                <li>Add tags to group related tasks together</li>
+                <li>Set due dates to receive reminders (requires notification permission)</li>
+                <li>Configure recurring tasks for repeating activities</li>
+              </ul>
             </div>
-            <button
-              onClick={() => setError(null)}
-              className="text-red-600 hover:text-red-800"
-            >
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                <path
-                  fillRule="evenodd"
-                  d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </button>
           </div>
         </div>
-      )}
-
-      {/* Edit Form */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <h3 className="text-lg font-semibold text-gray-900">Edit Task</h3>
-
-          {/* Title input */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Task Title *
-            </label>
-            <input
-              type="text"
-              value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              placeholder="What needs to be done?"
-              disabled={updateTaskMutation.isPending}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
-            />
-          </div>
-
-          {/* Description input */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Description (optional)
-            </label>
-            <textarea
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              placeholder="Add more details..."
-              disabled={updateTaskMutation.isPending}
-              rows={2}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
-            />
-          </div>
-
-          {/* Priority and Due Date row */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Priority
-              </label>
-              <select
-                value={formData.priority}
-                onChange={(e) => setFormData({ ...formData, priority: e.target.value as Priority })}
-                disabled={updateTaskMutation.isPending}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
-              >
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Due Date & Time (optional)
-              </label>
-              <input
-                type="datetime-local"
-                value={formData.due_date ? new Date(formData.due_date.getTime() - formData.due_date.getTimezoneOffset() * 60000).toISOString().slice(0, 16) : ""}
-                onChange={(e) => setFormData({ ...formData, due_date: e.target.value ? new Date(e.target.value) : null })}
-                disabled={updateTaskMutation.isPending}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
-              />
-            </div>
-          </div>
-
-          {/* Tags */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Tags {formData.tags.length > 0 && `(${formData.tags.length}/10)`}
-            </label>
-            <div className="flex flex-wrap gap-2 mb-2">
-              {formData.tags.map((tag, index) => (
-                <span
-                  key={index}
-                  className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
-                >
-                  <span>{tag}</span>
-                  <button
-                    type="button"
-                    onClick={() => setFormData({ ...formData, tags: formData.tags.filter((_, i) => i !== index) })}
-                    disabled={updateTaskMutation.isPending}
-                    className="hover:text-blue-900 disabled:cursor-not-allowed"
-                  >
-                    ×
-                  </button>
-                </span>
-              ))}
-            </div>
-            <div className="flex gap-2">
-              <input
-                type="text"
-                id="tag-input"
-                placeholder="Add a tag..."
-                disabled={updateTaskMutation.isPending || formData.tags.length >= 10}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    const input = e.currentTarget;
-                    const tag = input.value.trim();
-                    if (tag && !formData.tags.includes(tag) && formData.tags.length < 10) {
-                      setFormData({ ...formData, tags: [...formData.tags, tag] });
-                      input.value = "";
-                    }
-                  }
-                }}
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
-              />
-              <button
-                type="button"
-                onClick={() => {
-                  const input = document.getElementById("tag-input") as HTMLInputElement;
-                  const tag = input.value.trim();
-                  if (tag && !formData.tags.includes(tag) && formData.tags.length < 10) {
-                    setFormData({ ...formData, tags: [...formData.tags, tag] });
-                    input.value = "";
-                  }
-                }}
-                disabled={updateTaskMutation.isPending || formData.tags.length >= 10}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed transition-colors"
-              >
-                Add
-              </button>
-            </div>
-          </div>
-
-          {/* Recurrence Configuration */}
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <input
-                type="checkbox"
-                id="is_recurring"
-                checked={formData.is_recurring}
-                onChange={(e) => setFormData({ ...formData, is_recurring: e.target.checked, recurrence_pattern: e.target.checked ? formData.recurrence_pattern : null })}
-                disabled={updateTaskMutation.isPending}
-                className="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
-              />
-              <label htmlFor="is_recurring" className="text-sm font-medium text-gray-700">
-                Recurring Task
-              </label>
-            </div>
-
-            {formData.is_recurring && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Repeat Pattern *
-                  </label>
-                  <select
-                    value={formData.recurrence_pattern || ""}
-                    onChange={(e) => setFormData({ ...formData, recurrence_pattern: e.target.value as "daily" | "weekly" | "monthly" })}
-                    disabled={updateTaskMutation.isPending}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
-                  >
-                    <option value="">Select pattern</option>
-                    <option value="daily">Daily</option>
-                    <option value="weekly">Weekly</option>
-                    <option value="monthly">Monthly</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    End Date (optional)
-                  </label>
-                  <input
-                    type="date"
-                    value={formData.recurrence_end_date ? new Date(formData.recurrence_end_date.getTime() - formData.recurrence_end_date.getTimezoneOffset() * 60000).toISOString().split('T')[0] : ""}
-                    onChange={(e) => setFormData({ ...formData, recurrence_end_date: e.target.value ? new Date(e.target.value) : null })}
-                    disabled={updateTaskMutation.isPending}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
-                  />
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex items-center justify-between pt-4 border-t">
-            <button
-              type="button"
-              onClick={() => setShowDeleteConfirm(true)}
-              disabled={deleteTaskMutation.isPending}
-              className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:bg-red-400 disabled:cursor-not-allowed transition-colors font-medium flex items-center gap-2"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-              </svg>
-              {deleteTaskMutation.isPending ? "Deleting..." : "Delete Task"}
-            </button>
-            <button
-              type="submit"
-              disabled={updateTaskMutation.isPending || !formData.title.trim()}
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed transition-colors font-medium flex items-center gap-2"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-              {updateTaskMutation.isPending ? "Saving..." : "Save Changes"}
-            </button>
-          </div>
-        </form>
-      </div>
-
-      {/* Help Text */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <div className="flex items-start gap-3">
-          <svg
-            className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-          <div className="flex-1">
-            <h3 className="text-sm font-medium text-blue-900">Quick Tips</h3>
-            <ul className="mt-2 text-sm text-blue-700 list-disc list-inside space-y-1">
-              <li>Use descriptive titles to easily identify tasks later</li>
-              <li>Set priorities to help organize your work</li>
-              <li>Add tags to group related tasks together</li>
-              <li>Set due dates to receive reminders (requires notification permission)</li>
-              <li>Configure recurring tasks for repeating activities</li>
-            </ul>
-          </div>
-        </div>
-      </div>
+      </VibrantCard>
 
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
-            <h3 className="text-lg font-bold text-gray-900 mb-2">Delete Task?</h3>
-            <p className="text-gray-600 mb-6">
-              Are you sure you want to delete "{task.title}"? This action cannot be undone.
-            </p>
-            <div className="flex gap-3 justify-end">
-              <button
-                onClick={() => setShowDeleteConfirm(false)}
-                className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleDelete}
-                disabled={deleteTaskMutation.isPending}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:bg-red-400 transition-colors"
-              >
-                {deleteTaskMutation.isPending ? "Deleting..." : "Delete"}
-              </button>
+        <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <VibrantCard className="max-w-md w-full animate-fade-in">
+            <div className="p-6">
+              <h3 className="text-lg font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent mb-2">Delete Task?</h3>
+              <p className="text-slate-600 dark:text-slate-300 mb-6">
+                Are you sure you want to delete "{task.title}"? This action cannot be undone.
+              </p>
+              <div className="flex gap-3 justify-end">
+                <VibrantButton
+                  onClick={() => setShowDeleteConfirm(false)}
+                  variant="secondary"
+                >
+                  Cancel
+                </VibrantButton>
+                <VibrantButton
+                  onClick={handleDelete}
+                  disabled={deleteTaskMutation.isPending}
+                  variant="danger"
+                >
+                  {deleteTaskMutation.isPending ? "Deleting..." : "Delete"}
+                </VibrantButton>
+              </div>
             </div>
-          </div>
+          </VibrantCard>
         </div>
       )}
     </div>
