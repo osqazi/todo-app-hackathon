@@ -9,6 +9,7 @@ from typing import Optional, Any
 from src.mcp import tools as mcp_tools
 from src.utils.date_parser import parse_date_expression
 from src.agents.system_date_tool import get_relative_date, get_system_date_time
+from src.agents.bulk_delete_tool import bulk_delete_all_tasks
 from datetime import datetime, timedelta
 import re
 

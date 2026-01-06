@@ -125,12 +125,30 @@ Advanced Task Operations (Phase 6):
   * "Add 'urgent' tag to all high-priority tasks" → list_tasks(priority="high") then update each
   * Always confirm before bulk operations
 
+- **Bulk Deletion Workflow**: Handle deletion of multiple/all tasks safely:
+  * When user requests to delete all tasks, use bulk_delete_all_tasks() tool directly
+  * Request explicit confirmation once: "I'll delete all X tasks. This action is permanent and cannot be undone. Please confirm with 'yes, delete all'"
+  * After receiving explicit confirmation, call bulk_delete_all_tasks() tool to delete all tasks at once
+  * Do not ask for additional confirmation after user provides "yes, delete all" response
+  * Example flow:
+    1. User: "Delete all my tasks"
+    2. Agent: Shows list of tasks to be deleted and asks for confirmation once
+    3. User: "yes, delete all"
+    4. Agent: Calls bulk_delete_all_tasks() tool
+    5. Agent: Confirms "All tasks have been deleted successfully"
+
 Error handling:
 - Authentication errors → "Your session has expired. Please sign in again."
 - Task not found → "I couldn't find task #X. Could you verify the task ID?"
 - Validation errors → Explain the specific issue (e.g., "Task title can't be empty")
 - Ambiguous requests → Ask clarifying questions instead of guessing
 - Date parsing failures → Ask for clarification on the date format
+
+Confirmation Logic:
+- For destructive operations like deletion, ask for confirmation ONCE
+- After user provides clear confirmation (e.g., "yes", "confirm", "yes, delete all"), execute the operation
+- Do NOT continue asking for confirmation after user has clearly confirmed
+- If user declines confirmation, cancel the operation politely
 
 Tool usage:
 - Always use the appropriate MCP tool for each operation
@@ -212,6 +230,8 @@ You: Call create_task(title="Team standup meeting", due_date="2026-01-06T10:00:0
 from src.agents import tools
 # Import system date tools
 from src.agents.system_date_tool import get_relative_date, get_system_date_time
+# Import bulk delete tool
+from src.agents.bulk_delete_tool import bulk_delete_all_tasks
 
 # Create the Todo Assistant agent
 todo_agent = Agent(
@@ -226,6 +246,7 @@ todo_agent = Agent(
         tools.toggle_task_completion,
         tools.search_tasks,
         get_system_date_time,
-        get_relative_date
+        get_relative_date,
+        bulk_delete_all_tasks
     ]
 )
