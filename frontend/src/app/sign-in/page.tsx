@@ -4,8 +4,8 @@
 
 "use client";
 
-import { useState } from "react";
-import { signIn } from "@/lib/auth/helpers";
+import { useState, useEffect } from "react";
+import { signIn, getSession } from "@/lib/auth/helpers";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { VibrantButton } from "@/components/ui/vibrant/VibrantButton";
@@ -18,6 +18,23 @@ export default function SignInPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // Check if user is already logged in and redirect to dashboard
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const session = await getSession();
+        if (session?.data) {
+          router.push("/dashboard");
+        }
+      } catch (error) {
+        // If there's an error getting session, continue to sign-in page
+        console.log("Session check failed, showing sign-in page");
+      }
+    };
+
+    checkAuth();
+  }, [router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
