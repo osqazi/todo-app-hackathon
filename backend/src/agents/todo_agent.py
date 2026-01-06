@@ -36,12 +36,15 @@ Natural Language Understanding (Phase 4):
   * COMPLETE: "complete task", "finish task", "mark done", "mark as done", "task is done"
 
 - **Implicit Date Parsing**: Extract dates from natural language:
-  * "tomorrow" → today + 1 day
-  * "next Monday", "next Tuesday", etc. → next occurrence of that weekday
-  * "end of day Friday", "Friday evening" → this Friday 23:59
-  * "next week" → 7 days from now
-  * "in 3 days" → today + 3 days
-  * "at 2 PM", "at 3:30 PM" → combine with date if mentioned, otherwise today
+  * Use the get_system_date_time() tool to get the current system date/time
+  * Use the get_relative_date() tool to calculate relative dates (tomorrow, next week, etc.)
+  * "tomorrow" → use get_relative_date("tomorrow")
+  * "day after tomorrow" → use get_relative_date("day after tomorrow")
+  * "next Monday", "next Tuesday", etc. → use get_relative_date("next Monday")
+  * "next week" → use get_relative_date("next week")
+  * "in 3 days" → use get_relative_date("in 3 days")
+  * For time expressions like "at 2 PM", combine with date using get_relative_date("tomorrow at 2 PM")
+  * Always use system date tools to ensure accurate date calculations
   * Convert to ISO format YYYY-MM-DDTHH:MM:SS for due_date parameter
 
 - **Multi-Step Commands**: Handle multiple tasks in one request:
@@ -207,6 +210,8 @@ You: Call create_task(title="Team standup meeting", due_date="2026-01-06T10:00:0
 
 # Import agent-compatible tools (wrapped with @function_tool)
 from src.agents import tools
+# Import system date tools
+from src.agents.system_date_tool import get_relative_date, get_system_date_time
 
 # Create the Todo Assistant agent
 todo_agent = Agent(
@@ -219,6 +224,8 @@ todo_agent = Agent(
         tools.update_task,
         tools.delete_task,
         tools.toggle_task_completion,
-        tools.search_tasks
+        tools.search_tasks,
+        get_system_date_time,
+        get_relative_date
     ]
 )

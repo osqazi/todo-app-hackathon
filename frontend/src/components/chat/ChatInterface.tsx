@@ -8,6 +8,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { ChatMessage, ChatResponse, ChatRequest } from '@/types/chat';
 import { getToken } from '@/lib/auth/helpers';
 import { VibrantButton } from '@/components/ui/vibrant/VibrantButton';
@@ -28,12 +29,27 @@ import { Sparkles, MessageCircle, RotateCcw } from 'lucide-react';
  * - Persistent conversations across sessions
  */
 export default function ChatInterface() {
+  const router = useRouter();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [conversationId, setConversationId] = useState<number | null>(null);
   const [useStreaming, setUseStreaming] = useState(true); // Phase 7: Streaming toggle
+
+  // Check authentication on component mount
+  useEffect(() => {
+    const checkAuth = async () => {
+      const token = await getToken();
+      if (!token) {
+        // Redirect to sign-in if not authenticated
+        router.push('/sign-in');
+        return;
+      }
+    };
+
+    checkAuth();
+  }, [router]);
 
   /**
    * Send a message to the chat API (streaming or non-streaming).

@@ -36,7 +36,8 @@
       "Bash(python:*)",
       "Bash(alembic current:*)",
       "Bash(ping:*)",
-      "Bash(dir:*)"
+      "Bash(dir:*)",
+      "Bash(powershell Remove-Item \"D:\\\\Projects\\\\hackathon\\\\todo\\\\test_system_date.py\")"
     ]
   }
 }

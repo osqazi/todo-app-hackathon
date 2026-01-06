@@ -7,6 +7,10 @@ so they work properly with the OpenAI Agents SDK.
 from agents import function_tool
 from typing import Optional, Any
 from src.mcp import tools as mcp_tools
+from src.utils.date_parser import parse_date_expression
+from src.agents.system_date_tool import get_relative_date, get_system_date_time
+from datetime import datetime, timedelta
+import re
 
 
 @function_tool
@@ -34,12 +38,19 @@ async def create_task(
     Returns:
         Dict with created task details including id, title, description, priority, tags, due_date, etc.
     """
+    # Only parse natural language date expressions if due_date is provided
+    parsed_due_date = due_date
+    if due_date:
+        parsed_result = parse_date_expression(due_date)
+        if parsed_result is not None:
+            parsed_due_date = parsed_result
+
     return await mcp_tools.create_task(
         title=title,
         description=description,
         priority=priority,
         tags=tags,
-        due_date=due_date,
+        due_date=parsed_due_date,
         is_recurring=is_recurring,
         recurrence_pattern=recurrence_pattern
     )
@@ -74,12 +85,25 @@ async def list_tasks(
     Returns:
         Dict with "tasks" (list), "total" (int), "limit" (int), "offset" (int)
     """
+    # Parse natural language date expressions for date filters if provided
+    parsed_due_date_start = due_date_start
+    if due_date_start:
+        parsed_result = parse_date_expression(due_date_start)
+        if parsed_result is not None:
+            parsed_due_date_start = parsed_result
+
+    parsed_due_date_end = due_date_end
+    if due_date_end:
+        parsed_result = parse_date_expression(due_date_end)
+        if parsed_result is not None:
+            parsed_due_date_end = parsed_result
+
     return await mcp_tools.list_tasks(
         status=status,
         priority=priority,
         tags=tags,
-        due_date_start=due_date_start,
-        due_date_end=due_date_end,
+        due_date_start=parsed_due_date_start,
+        due_date_end=parsed_due_date_end,
         sort_by=sort_by,
         sort_order=sort_order,
         limit=limit,
@@ -128,13 +152,20 @@ async def update_task(
     Returns:
         Dict with updated task details
     """
+    # Parse natural language date expressions if due_date is provided
+    parsed_due_date = due_date
+    if due_date:
+        parsed_result = parse_date_expression(due_date)
+        if parsed_result is not None:
+            parsed_due_date = parsed_result
+
     return await mcp_tools.update_task(
         task_id=task_id,
         title=title,
         description=description,
         priority=priority,
         tags=tags,
-        due_date=due_date,
+        due_date=parsed_due_date,
         is_recurring=is_recurring,
         recurrence_pattern=recurrence_pattern
     )

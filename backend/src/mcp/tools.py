@@ -84,18 +84,22 @@ async def create_task(
         task = service.create_task(task_data=task_data)
         session.commit()
 
+        # Safely serialize datetime fields to avoid exceptions
+        def safe_isoformat(dt):
+            return dt.isoformat() if dt else None
+
         return {
             "id": task.id,
             "title": task.title,
             "description": task.description,
             "completed": task.completed,
             "priority": task.priority,
-            "tags": task.tags,
-            "due_date": task.due_date.isoformat() if task.due_date else None,
+            "tags": task.tags or [],
+            "due_date": safe_isoformat(task.due_date),
             "is_recurring": task.is_recurring,
             "recurrence_pattern": task.recurrence_pattern,
-            "created_at": task.created_at.isoformat(),
-            "updated_at": task.updated_at.isoformat()
+            "created_at": safe_isoformat(task.created_at),
+            "updated_at": safe_isoformat(task.updated_at)
         }
     except ValueError as e:
         session.rollback()
@@ -179,6 +183,10 @@ async def list_tasks(
             limit=min(limit, 100)
         )
 
+        # Safely serialize datetime fields to avoid exceptions
+        def safe_isoformat(dt):
+            return dt.isoformat() if dt and hasattr(dt, 'isoformat') else None
+
         return {
             "tasks": [
                 {
@@ -188,11 +196,11 @@ async def list_tasks(
                     "completed": t.completed,
                     "priority": t.priority,
                     "tags": t.tags or [],
-                    "due_date": t.due_date.isoformat() if t.due_date else None,
+                    "due_date": safe_isoformat(t.due_date),
                     "is_recurring": t.is_recurring or False,
                     "recurrence_pattern": t.recurrence_pattern,
-                    "created_at": t.created_at.isoformat() if t.created_at else None,
-                    "updated_at": t.updated_at.isoformat() if t.updated_at else None
+                    "created_at": safe_isoformat(t.created_at),
+                    "updated_at": safe_isoformat(t.updated_at)
                 }
                 for t in tasks
             ],
@@ -227,18 +235,22 @@ async def get_task(task_id: int) -> dict[str, Any]:
         if not task:
             raise ToolError(f"Task #{task_id} not found. Please check the task ID.")
 
+        # Safely serialize datetime fields to avoid exceptions
+        def safe_isoformat(dt):
+            return dt.isoformat() if dt and hasattr(dt, 'isoformat') else None
+
         return {
             "id": task.id,
             "title": task.title,
             "description": task.description,
             "completed": task.completed,
             "priority": task.priority,
-            "tags": task.tags,
-            "due_date": task.due_date.isoformat() if task.due_date else None,
+            "tags": task.tags or [],
+            "due_date": safe_isoformat(task.due_date),
             "is_recurring": task.is_recurring,
             "recurrence_pattern": task.recurrence_pattern,
-            "created_at": task.created_at.isoformat(),
-            "updated_at": task.updated_at.isoformat()
+            "created_at": safe_isoformat(task.created_at),
+            "updated_at": safe_isoformat(task.updated_at)
         }
     except ToolError:
         raise
@@ -306,18 +318,22 @@ async def update_task(
 
         session.commit()
 
+        # Safely serialize datetime fields to avoid exceptions
+        def safe_isoformat(dt):
+            return dt.isoformat() if dt and hasattr(dt, 'isoformat') else None
+
         return {
             "id": task.id,
             "title": task.title,
             "description": task.description,
             "completed": task.completed,
             "priority": task.priority,
-            "tags": task.tags,
-            "due_date": task.due_date.isoformat() if task.due_date else None,
+            "tags": task.tags or [],
+            "due_date": safe_isoformat(task.due_date),
             "is_recurring": task.is_recurring,
             "recurrence_pattern": task.recurrence_pattern,
-            "created_at": task.created_at.isoformat(),
-            "updated_at": task.updated_at.isoformat()
+            "created_at": safe_isoformat(task.created_at),
+            "updated_at": safe_isoformat(task.updated_at)
         }
     except ToolError:
         session.rollback()
@@ -393,18 +409,22 @@ async def toggle_task_completion(task_id: int, completed: bool) -> dict[str, Any
 
         session.commit()
 
+        # Safely serialize datetime fields to avoid exceptions
+        def safe_isoformat(dt):
+            return dt.isoformat() if dt and hasattr(dt, 'isoformat') else None
+
         return {
             "id": task.id,
             "title": task.title,
             "description": task.description,
             "completed": task.completed,
             "priority": task.priority,
-            "tags": task.tags,
-            "due_date": task.due_date.isoformat() if task.due_date else None,
+            "tags": task.tags or [],
+            "due_date": safe_isoformat(task.due_date),
             "is_recurring": task.is_recurring,
             "recurrence_pattern": task.recurrence_pattern,
-            "created_at": task.created_at.isoformat(),
-            "updated_at": task.updated_at.isoformat()
+            "created_at": safe_isoformat(task.created_at),
+            "updated_at": safe_isoformat(task.updated_at)
         }
     except ToolError:
         session.rollback()
@@ -462,6 +482,10 @@ async def search_tasks(
             offset=0
         )
 
+        # Safely serialize datetime fields to avoid exceptions
+        def safe_isoformat(dt):
+            return dt.isoformat() if dt and hasattr(dt, 'isoformat') else None
+
         return {
             "tasks": [
                 {
@@ -471,11 +495,11 @@ async def search_tasks(
                     "completed": t.completed,
                     "priority": t.priority,
                     "tags": t.tags or [],
-                    "due_date": t.due_date.isoformat() if t.due_date else None,
+                    "due_date": safe_isoformat(t.due_date),
                     "is_recurring": t.is_recurring or False,
                     "recurrence_pattern": t.recurrence_pattern,
-                    "created_at": t.created_at.isoformat() if t.created_at else None,
-                    "updated_at": t.updated_at.isoformat() if t.updated_at else None
+                    "created_at": safe_isoformat(t.created_at),
+                    "updated_at": safe_isoformat(t.updated_at)
                 }
                 for t in tasks
             ],
