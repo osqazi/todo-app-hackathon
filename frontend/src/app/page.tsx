@@ -39,8 +39,8 @@ export default async function Home() {
         </div>
       </div>
 
-      <div className="flex flex-col lg:flex-row min-h-screen">
-        {/* Features Section - Left Side */}
+      <div className="flex flex-col-reverse lg:flex-row min-h-screen">
+        {/* Features Section - Left Side (will be bottom on mobile) */}
         <div className="lg:w-1/3 w-full lg:min-h-screen bg-gradient-to-b from-slate-800/30 to-slate-900/30 backdrop-blur-sm border-r border-slate-700/50 p-8 lg:p-12">
           <div className="sticky top-8">
             <h2 className="text-2xl font-bold mb-8 text-slate-100">
@@ -87,7 +87,7 @@ export default async function Home() {
           </div>
         </div>
 
-        {/* Main Content - Right Side */}
+        {/* Main Content - Right Side (will be top on mobile) */}
         <div className="lg:w-2/3 w-full flex items-center justify-center p-8 lg:p-24">
           <div className="max-w-2xl w-full text-center">
             {/* Application Icon */}
