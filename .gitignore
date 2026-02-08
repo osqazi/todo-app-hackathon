@@ -45,6 +45,10 @@ ENV/
 .DS_Store
 Thumbs.db
 
+backend-secret.yaml
+temp-values.yaml
+todo-app-helm-chart/values.yaml
+
 # Testing
 .pytest_cache/
 .coverage
