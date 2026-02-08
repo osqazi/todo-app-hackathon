@@ -48,6 +48,7 @@ Thumbs.db
 backend-secret.yaml
 temp-values.yaml
 todo-app-helm-chart/values.yaml
+charts/
 
 # Testing
 .pytest_cache/
